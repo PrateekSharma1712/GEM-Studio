@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="buttonTextColor">#898383</color>
+    <color name="dividerColor">#ff686363</color>
+
+    <color name="theme_default_primary_light">#4DB6AC</color>
+    <color name="theme_default_primary">#009688</color>
+    <color name="theme_default_primary_dark">#004D40</color>
+    <color name="theme_default_accent">#00796B</color>
+    <color name="theme_default_accent_light">#ff90b4b0</color>
+    <color name="theme_default_accent_dark">#00897B</color>
+
+    <color name="group_card_bg">#ff9ec5c1</color>
+
+    <color name="theme_background">#f2f2f2</color>
+</resources>
