@@ -322,7 +322,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
 
     @Override
     public void modeConfirmed() {
-       DebugLogger.message("Confirmed");
+        DebugLogger.message("Confirmed");
         isEditMode = false;
         vEditGroup.setIcon(R.drawable.ic_content_create);
     }

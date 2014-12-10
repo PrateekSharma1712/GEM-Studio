@@ -134,7 +134,7 @@ public class ConfirmationDialog extends DialogFragment {
                 public void onClick(View v) {
                     System.out.println("in");
                     System.out.println(buttonText.getText());
-                    if (position == 0) {
+                    if (position == 1) {
                         System.out.println(position);
                         dismiss();
                         switch (confirmId) {
