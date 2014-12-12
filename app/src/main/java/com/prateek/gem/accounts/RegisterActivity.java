@@ -104,7 +104,7 @@ public class RegisterActivity extends BaseActivity {
 
                     checkRegistrationTask = new AsyncTask<String, Void, Boolean>(){
 
-                        MyProgressDialog pd = new MyProgressDialog(baseActivity, true, getString(R.string.load_checking_number));
+                        MyProgressDialog pd = new MyProgressDialog(baseActivity, getString(R.string.load_checking_number));
 
                         @Override
                         protected void onPreExecute() {
@@ -156,7 +156,7 @@ public class RegisterActivity extends BaseActivity {
 
                     registrationTask = new AsyncTask<Void, Void, Boolean>(){
 
-                        MyProgressDialog pd = new MyProgressDialog(baseActivity, true, getString(R.string.registering));
+                        MyProgressDialog pd = new MyProgressDialog(baseActivity, getString(R.string.registering));
 
                         @Override
                         protected Boolean doInBackground(Void... params) {

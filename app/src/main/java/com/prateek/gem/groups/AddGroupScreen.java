@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -18,22 +19,36 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.prateek.gem.AppConstants;
+import com.prateek.gem.AppSharedPreference;
 import com.prateek.gem.MainActivity;
 import com.prateek.gem.R;
+import com.prateek.gem.accounts.LoginScreen;
 import com.prateek.gem.expenses.AddExpenseActivity;
 import com.prateek.gem.expenses.ExpensesActivity;
 import com.prateek.gem.helper.AppDialog;
 import com.prateek.gem.logger.DebugLogger;
+import com.prateek.gem.persistence.DB;
+import com.prateek.gem.persistence.DBImpl;
+import com.prateek.gem.service.ServiceHandler;
 import com.prateek.gem.utility.AppDataManager;
+import com.prateek.gem.utility.LoadingScreen;
 import com.prateek.gem.utility.Utils;
 import com.prateek.gem.widgets.ConfirmationDialog;
 import com.prateek.gem.widgets.FloatingActionButtonWithText;
 import com.prateek.gem.widgets.FloatingActionsMenu;
+import com.prateek.gem.widgets.MyProgressDialog;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static com.prateek.gem.helper.AppDialog.DialogClickListener;
 
@@ -41,6 +56,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
 
 
     private ImageView vGroupImage = null;
+    Uri originalUri = null;
     private EditText vGroupName = null;
     private String[] imageCaptureOptions = new String[]{"Camera", "Gallery"};
     private String filepathFromCamera = null;
@@ -56,6 +72,10 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
     private Intent mItemScreenIntent = null;
     private MenuItem vEditGroup = null;
     private boolean isEditMode = false;
+    private long recordedTime;
+    Group recentlyAddedGroup = null;
+    ServiceHandler handler;
+    int addedMemberIntoGroup;
 
     @Override
     protected int getLayoutResource() {
@@ -98,6 +118,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
         vGroupImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                recordedTime = Utils.getCurrentTimeInMilliSecs();
                 AppDialog.init(AppDataManager.currentScreen, getString(R.string.takephoto), null, imageCaptureOptions);
             }
         });
@@ -274,7 +295,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
         DebugLogger.message("AddGroupScreen :: onActivityResult");
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != Activity.RESULT_OK) return;
-        Uri originalUri = null;
+
         if (requestCode == AppConstants.REQUEST_CODE_FROM_GALLERY) {
             if(data != null) {
                 originalUri = data.getData();
@@ -323,7 +344,117 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
     @Override
     public void modeConfirmed() {
         DebugLogger.message("Confirmed");
+        new AddGroupTask().execute((Void)null);
         isEditMode = false;
         vEditGroup.setIcon(R.drawable.ic_content_create);
     }
+
+    public class AddGroupTask extends AsyncTask<Void, Void, Integer> {
+
+        @Override
+        protected void onPreExecute() {
+            // TODO Auto-generated method stub
+            super.onPreExecute();
+            LoadingScreen.showLoading(baseActivity,"Adding Group "+Utils.stringify(vGroupName.getText()));
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+            // TODO Auto-generated method stub
+            Long d = new Date().getTime();
+            if(originalUri == null){
+                String defaultPath = "0";
+                originalUri = Uri.parse(defaultPath);
+            }
+            System.out.println("asdasda"+originalUri.getPath());
+            int i = Utils.uploadFile(originalUri.getPath());
+            System.out.println(i);
+            List<NameValuePair> list = new ArrayList<NameValuePair>();
+            list.add(new BasicNameValuePair(DB.TGroups.GROUPNAME,Utils.stringify(vGroupName.getText())));
+            list.add(new BasicNameValuePair(DB.TGroups.DATEOFCREATION,d.toString()));
+            if(recordedTime == 0){
+                list.add(new BasicNameValuePair(DB.TGroups.GROUPICON,recordedTime+""));
+            }else{
+                list.add(new BasicNameValuePair(DB.TGroups.GROUPICON,recordedTime+".jpg"));
+            }
+            list.add(new BasicNameValuePair("ADMIN",""+ AppSharedPreference.getAccPreference(AppConstants.ADMIN_PHONE)));
+            list.add(new BasicNameValuePair(AppConstants.SERVICE_ID, ""+ AppConstants.ServiceIDs.ADD_GROUP));
+            handler = new ServiceHandler();
+            String json = handler.makeServiceCall(AppConstants.URL_API, AppConstants.REQUEST_METHOD_POST,list);
+            JSONObject object = null;
+            try{
+                object = new JSONObject(json);
+                if(!object.getBoolean("error")){
+                    recentlyAddedGroup = new Group();
+                    recentlyAddedGroup.setGroupIdServer(object.getInt(DB.TGroups.GROUPID));
+                    recentlyAddedGroup.setGroupName(object.getString(DB.TGroups.GROUPNAME));
+                    recentlyAddedGroup.setGroupIcon(object.getString(DB.TGroups.GROUPICON));
+                    recentlyAddedGroup.setDate(object.getString(DB.TGroups.DATEOFCREATION));
+                    recentlyAddedGroup.setMembersCount(object.getInt(DB.TGroups.TOTALMEMBERS));
+                    recentlyAddedGroup.setTotalOfExpense((float) object.getDouble(DB.TGroups.TOTALOFEXPENSE));
+                    recentlyAddedGroup.setAdmin(object.getString("admin"));
+                    return recentlyAddedGroup.getGroupIdServer();
+                }
+            }catch(JSONException e){
+                e.printStackTrace();
+            }
+            return 0;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            // TODO Auto-generated method stub
+            super.onPostExecute(result);
+            LoadingScreen.updateIndicatorMessage("Adding Group Owner");
+            if(result > 0){
+                new AddMemberTask().execute(new Integer[]{result});
+            }
+        }
+    }
+
+    public class AddMemberTask extends AsyncTask<Integer, Void, Boolean>{
+
+        @Override
+        protected Boolean doInBackground(Integer... params) {
+            // TODO Auto-generated method stub
+            List<NameValuePair> list = new ArrayList<NameValuePair>();
+            list.add(new BasicNameValuePair(DB.TMembers.GROUP_ID_FK,""+params[0]));
+            list.add(new BasicNameValuePair(DB.TMembers.NAME,AppSharedPreference.getAccPreference(AppConstants.ADMIN_NAME)));
+            list.add(new BasicNameValuePair(DB.TMembers.PHONE_NUMBER,AppSharedPreference.getAccPreference(AppConstants.ADMIN_PHONE)));
+            list.add(new BasicNameValuePair(AppConstants.SERVICE_ID, ""+ AppConstants.ServiceIDs.ADD_MEMBER));
+            String json = handler.makeServiceCall(AppConstants.URL_API, AppConstants.REQUEST_METHOD_POST,list);
+            JSONObject object = null;
+            try{
+                object = new JSONObject(json);
+                if(!object.getBoolean("error")){
+                    addedMemberIntoGroup = object.getInt("id");
+                    return true;
+                }
+            }catch(JSONException e){
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            // TODO Auto-generated method stub
+            super.onPostExecute(result);
+
+            if(result){
+                recentlyAddedGroup.setMembersCount(1);
+
+                long rowId = DBImpl.addGroup(recentlyAddedGroup);
+                recentlyAddedGroup.setGroupId((int) rowId);
+
+                DBImpl.addAdminToGroup(addedMemberIntoGroup, recentlyAddedGroup.getGroupIdServer());
+
+                AppDataManager.getGroups().add(recentlyAddedGroup);
+                LoadingScreen.dismissProgressDialog();
+                finish();
+            }
+        }
+    }
+
+
 }

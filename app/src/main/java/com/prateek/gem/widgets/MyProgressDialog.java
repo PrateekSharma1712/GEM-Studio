@@ -9,7 +9,6 @@ import com.prateek.gem.R;
 
 public class MyProgressDialog extends AlertDialog {
 
-	private boolean showText;
 	private TextView dialogTextView;
 	private String dialogText;
 	
@@ -17,12 +16,10 @@ public class MyProgressDialog extends AlertDialog {
 	public MyProgressDialog(Context context) {
 		super(context);
 		System.out.println("showing");
-		showText = false;
 	}
 	
-	public MyProgressDialog(Context context, boolean showText,String dialogText) {
-		super(context); 
-		this.showText = showText;
+	public MyProgressDialog(Context context, String dialogText) {
+		super(context);
 		this.dialogText = dialogText;
 	}
 
@@ -33,7 +30,7 @@ public class MyProgressDialog extends AlertDialog {
 		super.show();	 	 
 		setContentView(R.layout.dialog_loading);
 		dialogTextView = (TextView) findViewById(R.id.dialogText);
-		if(showText){
+		if(dialogText != null){
 			dialogTextView.setVisibility(View.VISIBLE);
 			dialogTextView.setText(dialogText);
 		}

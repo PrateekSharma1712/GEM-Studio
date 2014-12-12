@@ -222,6 +222,7 @@ public class DB extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase database) {
         database.execSQL(TGroups.CREATE_QUERY_GROUPS);
+        database.execSQL(TMembers.CREATE_QUERY_MEMBERS);
     }
 
     @Override

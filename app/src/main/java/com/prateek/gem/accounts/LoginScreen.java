@@ -188,7 +188,7 @@ public class LoginScreen extends BaseActivity {
         private int errorCode = 1;
         ServiceHandler handler = new ServiceHandler();
         String message;
-        MyProgressDialog pd = new MyProgressDialog(baseActivity, true, "Signing in...");
+        MyProgressDialog pd = new MyProgressDialog(baseActivity, "Signing in...");
 
         @Override
         protected Boolean doInBackground(Void... params) {

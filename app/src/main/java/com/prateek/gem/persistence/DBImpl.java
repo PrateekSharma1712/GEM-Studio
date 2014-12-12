@@ -1,8 +1,11 @@
 package com.prateek.gem.persistence;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.prateek.gem.AppConstants;
+import com.prateek.gem.AppSharedPreference;
 import com.prateek.gem.groups.Group;
 import com.prateek.gem.logger.DebugLogger;
 
@@ -72,5 +75,31 @@ public class DBImpl extends DB {
 
         return mGroups;
 
+    }
+    
+    public static long addGroup(Group group) {
+        ContentValues cv = new ContentValues();
+        cv.put(TGroups.GROUPID_SERVER, group.getGroupIdServer());
+        cv.put(TGroups.GROUPNAME, group.getGroupName());
+        cv.put(TGroups.GROUPICON, group.getGroupIcon().toString());
+        cv.put(TGroups.DATEOFCREATION, group.getDate());
+        cv.put(TGroups.TOTALMEMBERS, group.getMembersCount());
+        cv.put(TGroups.TOTALOFEXPENSE, group.getTotalOfExpense());
+        cv.put(TGroups.ADMIN, group.getAdmin());
+        return insert(TGroups.TGROUPS,cv);
+    }
+
+    public static long addAdminToGroup(int addedMemberIntoGroup, int groupIdFk) {
+        ContentValues cv = new ContentValues();
+        cv = new ContentValues();
+        cv.put(TMembers.MEMBER_ID_SERVER, addedMemberIntoGroup);
+        cv.put(TMembers.NAME, AppSharedPreference.getAccPreference(AppConstants.ADMIN_NAME));
+        cv.put(TMembers.PHONE_NUMBER, AppSharedPreference.getAccPreference(AppConstants.ADMIN_PHONE));
+        cv.put(TMembers.GROUP_ID_FK, groupIdFk);
+        return insert(TMembers.TMEMBERS,cv);
+    }
+
+    private static long insert(String tableName, ContentValues cv) {
+        return getDatabase().insert(tableName,null,cv);
     }
 }
