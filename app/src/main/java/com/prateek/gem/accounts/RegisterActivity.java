@@ -96,11 +96,11 @@ public class RegisterActivity extends BaseActivity {
                     confirmPassword.setError(getString(R.string.notmatch));
                     confirmPassword.requestFocus();
                 }else{
-                    System.out.println(name);
-                    System.out.println(email);
-                    System.out.println(number);
-                    System.out.println(passwordValue);
-                    System.out.println(confirmPasswordValue);
+                    DebugLogger.message(name);
+                    DebugLogger.message(email);
+                    DebugLogger.message(number);
+                    DebugLogger.message(passwordValue);
+                    DebugLogger.message(confirmPasswordValue);
 
                     checkRegistrationTask = new AsyncTask<String, Void, Boolean>(){
 
@@ -119,7 +119,7 @@ public class RegisterActivity extends BaseActivity {
                             list.add(new BasicNameValuePair("number", params[0]));
                             list.add(new BasicNameValuePair(AppConstants.SERVICE_ID, ""+ AppConstants.ServiceIDs.CHECK_USER_REGISTERED));
                             String jsonResponse = handler.makeServiceCall(AppConstants.URL_API, AppConstants.REQUEST_METHOD_POST, list);
-                            System.out.println(jsonResponse);
+                            DebugLogger.message(jsonResponse);
                             if(jsonResponse != null){
                                 try {
                                     JSONObject jsonObject = new JSONObject(jsonResponse);
@@ -136,13 +136,12 @@ public class RegisterActivity extends BaseActivity {
 
                         @Override
                         protected void onPostExecute(Boolean result) {
-                            // TODO Auto-generated method stub
                             super.onPostExecute(result);
-                            System.out.println("Resgistered "+result);
+                            DebugLogger.message("Resgistered "+result);
 
                             pd.dismiss();
                             if(!result){
-                                System.out.println("enter");
+                                DebugLogger.message("enter");
                                 registrationTask.execute();
                             }else{
                                 adminNumber.setError(getString(R.string.alreadyregistered));
@@ -222,8 +221,8 @@ public class RegisterActivity extends BaseActivity {
         String[] names = new String[accounts.length];
         for (int i = 0; i < names.length; i++) {
             names[i] = accounts[i].name;
-            System.out.println("Account "+i+" \nName"+names[i]);
-            System.out.println("Type"+accounts[i].type);
+            DebugLogger.message("Account "+i+" \nName"+names[i]);
+            DebugLogger.message("Type"+accounts[i].type);
         }
         return names;
     }

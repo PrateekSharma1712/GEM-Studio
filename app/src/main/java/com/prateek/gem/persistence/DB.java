@@ -15,7 +15,7 @@ public class DB extends SQLiteOpenHelper{
 
     private static Context context;
     public static final String DATABASE_NAME = "gemdatabase";
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     private static DB mInstance = null;
 
     public class TGroups{

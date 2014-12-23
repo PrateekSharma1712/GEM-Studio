@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
             android:text="Text 1"
-            android:textColor="@color/theme_default_accent"
+            android:textColor="@color/theme_default_text_primary"
             android:textSize="@dimen/titleSize" />
 
         <TextView
@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Text 2"
-            android:textColor="@color/theme_default_accent_light"
+            android:textColor="@color/theme_default_text_secondary"
             android:textSize="@dimen/subTitleSize" />
     </LinearLayout>
 

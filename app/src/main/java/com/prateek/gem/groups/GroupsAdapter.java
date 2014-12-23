@@ -25,10 +25,12 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ViewHolder
     private ArrayList<Group> mGroups = null;
     private BaseActivity mScreen = null;
     private ImageLoader imgLoader;
+    private static int colorFilter;
 
     public GroupsAdapter(BaseActivity screen) {
         mScreen = screen;
         imgLoader = new ImageLoader(mScreen);
+        colorFilter = mScreen.getResources().getColor(R.color.theme_default_primary);
     }
 
     public void setGroups(ArrayList<Group> groups) {
@@ -51,6 +53,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ViewHolder
             vGroupName = (TextView) v.findViewById(R.id.vGroupName);
             vGroupDescription = (TextView) v.findViewById(R.id.vGroupDescription);
             vGroupAvatar = (ImageView) v.findViewById(R.id.vGroupAvatar);
+            vGroupAvatar.setColorFilter(colorFilter);
         }
     }
 
@@ -76,7 +79,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.ViewHolder
         viewHolder.vView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainLandingScreen) mScreen).onItemSelected(group);
+                ((MainLandingScreen) mScreen).onItemSelected(group, position);
             }
         });
     }

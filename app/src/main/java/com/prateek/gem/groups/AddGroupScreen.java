@@ -22,8 +22,6 @@ import com.prateek.gem.AppConstants;
 import com.prateek.gem.AppSharedPreference;
 import com.prateek.gem.MainActivity;
 import com.prateek.gem.R;
-import com.prateek.gem.accounts.LoginScreen;
-import com.prateek.gem.expenses.AddExpenseActivity;
 import com.prateek.gem.expenses.ExpensesActivity;
 import com.prateek.gem.helper.AppDialog;
 import com.prateek.gem.logger.DebugLogger;
@@ -34,9 +32,6 @@ import com.prateek.gem.utility.AppDataManager;
 import com.prateek.gem.utility.LoadingScreen;
 import com.prateek.gem.utility.Utils;
 import com.prateek.gem.widgets.ConfirmationDialog;
-import com.prateek.gem.widgets.FloatingActionButtonWithText;
-import com.prateek.gem.widgets.FloatingActionsMenu;
-import com.prateek.gem.widgets.MyProgressDialog;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -65,8 +60,6 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
     private CardView vExpenseCardView = null;
     private CardView vMemberCardView = null;
     private CardView vItemCardView = null;
-    private FloatingActionsMenu vAddOptions = null;
-    private FloatingActionButtonWithText vAddExpenseButton = null;
     private Intent mExenseScreenIntent = null, mAddExpenseScreenIntent = null;
     private Intent mMemberScreenIntent = null;
     private Intent mItemScreenIntent = null;
@@ -86,15 +79,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        selfIntent = getIntent();
-        if(selfIntent != null) {
-            isNew = selfIntent.getBooleanExtra(AppConstants.GROUP_SOURCE, Boolean.FALSE);
-            DebugLogger.message("isNew"+isNew);
-        }
-
         vGroupName = (EditText) findViewById(R.id.vGroupName);
-        vAddOptions = (FloatingActionsMenu) findViewById(R.id.vAddOptions);
-        vAddExpenseButton = (FloatingActionButtonWithText) findViewById(R.id.vAddExpenseButton);
         vExpenseCardView = (CardView) findViewById(R.id.vExpenseBrief);
         vMemberCardView = (CardView) findViewById(R.id.vMembersBrief);
         vItemCardView = (CardView) findViewById(R.id.vItemsBrief);
@@ -102,13 +87,21 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
         vMemberCardView.startAnimation(Utils.inFromBottomAnimation(400));
         vItemCardView.startAnimation(Utils.inFromBottomAnimation(400));
 
+        selfIntent = getIntent();
+        if(selfIntent != null) {
+            isNew = selfIntent.getBooleanExtra(AppConstants.GROUP_SOURCE, Boolean.FALSE);
+            DebugLogger.message("isNew"+isNew);
+            if(!isNew) {
+                recentlyAddedGroup = selfIntent.getParcelableExtra(AppConstants.GROUP);
+                vGroupName.setText(recentlyAddedGroup.getGroupName());
+            }
+        }
 
         if(isNew) {
             isEditMode = true;
             vExpenseCardView.setVisibility(View.GONE);
             vMemberCardView.setVisibility(View.GONE);
             vItemCardView.setVisibility(View.GONE);
-            vAddOptions.setVisibility(View.GONE);
             vGroupName.clearFocus();
             AppDataManager.hideKeyboard(vGroupName);
         }
@@ -128,14 +121,6 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
             public void onClick(View v) {
                 mExenseScreenIntent = new Intent(AddGroupScreen.this, ExpensesActivity.class);
                 startActivity(mExenseScreenIntent);
-            }
-        });
-
-        vAddExpenseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAddExpenseScreenIntent = new Intent(AddGroupScreen.this, AddExpenseActivity.class);
-                startActivity(mAddExpenseScreenIntent);
             }
         });
 
@@ -449,7 +434,6 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
 
                 DBImpl.addAdminToGroup(addedMemberIntoGroup, recentlyAddedGroup.getGroupIdServer());
 
-                AppDataManager.getGroups().add(recentlyAddedGroup);
                 LoadingScreen.dismissProgressDialog();
                 finish();
             }

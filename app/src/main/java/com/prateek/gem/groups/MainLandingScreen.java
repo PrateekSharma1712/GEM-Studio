@@ -9,6 +9,8 @@ import android.view.View;
 import com.prateek.gem.AppConstants;
 import com.prateek.gem.MainActivity;
 import com.prateek.gem.R;
+import com.prateek.gem.expenses.AddExpenseActivity;
+import com.prateek.gem.expenses.ExpensesActivity;
 import com.prateek.gem.logger.DebugLogger;
 import com.prateek.gem.persistence.DBImpl;
 import com.prateek.gem.utility.AppDataManager;
@@ -23,6 +25,8 @@ public class MainLandingScreen extends MainActivity {
     private AddFloatingActionButton vAddGroupButton;
 
     Intent mAddGroupScreenIntent = null;
+    Intent mExpensesScreenIntent = null;
+    Intent mAddExpensesScreenIntent = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +46,8 @@ public class MainLandingScreen extends MainActivity {
         vGroupsList.setLayoutManager(mLayoutManager);
 
         // specify an adapter
-        AppDataManager.setGroups(DBImpl.getGroups());
         mGroupsAdapter = new GroupsAdapter(baseActivity);
-        mGroupsAdapter.setGroups(AppDataManager.getGroups());
+        mGroupsAdapter.setGroups(DBImpl.getGroups());
         vGroupsList.setAdapter(mGroupsAdapter);
 
         vAddGroupButton.setOnClickListener(new View.OnClickListener() {
@@ -59,14 +62,33 @@ public class MainLandingScreen extends MainActivity {
 
     }
 
-    public void onItemSelected(Group group) {
+    public void onItemSelected(Group group, int position) {
         super.onItemSelected(group);
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(AppConstants.GROUP_SOURCE, false);
-        AppDataManager.setCurrentGroup(group);
-        DebugLogger.message("onItemSelected"+mGroup);
-        mAddGroupScreenIntent.putExtras(bundle);
-        startActivity(mAddGroupScreenIntent);
+        if(position == 0) {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(AppConstants.GROUP_SOURCE, false);
+            bundle.putParcelable(AppConstants.GROUP, group);
+            AppDataManager.setCurrentGroup(group);
+            DebugLogger.message("onItemSelected" + mGroup);
+            if(group.getTotalOfExpense() > 0) {
+                mExpensesScreenIntent = new Intent(MainLandingScreen.this, ExpensesActivity.class);
+                mExpensesScreenIntent.putExtras(bundle);
+                startActivity(mExpensesScreenIntent);
+            } else {
+                mAddExpensesScreenIntent = new Intent(MainLandingScreen.this, AddExpenseActivity.class);
+                mAddExpensesScreenIntent.putExtras(bundle);
+                startActivity(mAddExpensesScreenIntent);
+            }
+
+        } else {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(AppConstants.GROUP_SOURCE, false);
+            bundle.putParcelable(AppConstants.GROUP, group);
+            AppDataManager.setCurrentGroup(group);
+            DebugLogger.message("onItemSelected" + mGroup);
+            mAddGroupScreenIntent.putExtras(bundle);
+            startActivity(mAddGroupScreenIntent);
+        }
     }
 
     @Override
@@ -83,6 +105,11 @@ public class MainLandingScreen extends MainActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if(mGroupsAdapter == null) {
+            mGroupsAdapter.setGroups(DBImpl.getGroups());
+        }
 
+        mGroupsAdapter.setGroups(DBImpl.getGroups());
+        mGroupsAdapter.notifyDataSetChanged();
     }
 }

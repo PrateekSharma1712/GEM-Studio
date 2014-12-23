@@ -48,7 +48,7 @@
                     android:id="@+id/vExpenseBrief"
                     android:background="?android:attr/selectableItemBackground"
                     card_view:cardCornerRadius="@dimen/group_card_radius"
-                    card_view:cardBackgroundColor="@color/group_card_bg"
+                    card_view:cardBackgroundColor="@color/theme_default_primary"
                     card_view:contentPadding="@dimen/group_card_content_padding"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
@@ -67,7 +67,7 @@
                     android:id="@+id/vMembersBrief"
                     android:background="?android:attr/selectableItemBackground"
                     card_view:cardCornerRadius="@dimen/group_card_radius"
-                    card_view:cardBackgroundColor="@color/group_card_bg"
+                    card_view:cardBackgroundColor="@color/theme_default_primary"
                     card_view:contentPadding="@dimen/group_card_content_padding"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
@@ -87,7 +87,7 @@
                     android:id="@+id/vItemsBrief"
                     android:background="?android:attr/selectableItemBackground"
                     card_view:cardCornerRadius="@dimen/group_card_radius"
-                    card_view:cardBackgroundColor="@color/group_card_bg"
+                    card_view:cardBackgroundColor="@color/theme_default_primary"
                     card_view:contentPadding="@dimen/group_card_content_padding"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
@@ -104,42 +104,6 @@
                 </android.support.v7.widget.CardView>
             </RelativeLayout>
         </ScrollView>
-
-        <com.prateek.gem.widgets.FloatingActionsMenu
-            android:id="@+id/vAddOptions"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            fab:fab_addButtonPlusIconColor="@android:color/white"
-            card_view:fab_addButtonColorNormal="@color/theme_default_primary"
-            card_view:fab_addButtonColorPressed="@color/theme_default_primary"
-            android:layout_marginBottom="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_gravity="right|bottom"
-            >
-
-
-            <com.prateek.gem.widgets.FloatingActionButtonWithText
-                android:id="@+id/vAddExpenseButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                fab:fabt_icon="@drawable/ic_group"
-                fab:fabt_colorNormal="@color/theme_default_primary"
-                fab:fabt_colorPressed="@color/theme_default_primary_light" />
-
-            <com.prateek.gem.widgets.FloatingActionButtonWithText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                fab:fabt_icon="@drawable/ic_group_add"
-                fab:fabt_colorNormal="@color/theme_default_primary"
-                fab:fabt_colorPressed="@color/theme_default_primary_light" />
-
-        </com.prateek.gem.widgets.FloatingActionsMenu>
-
-
     </FrameLayout>
 
 

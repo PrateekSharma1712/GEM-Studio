@@ -10,7 +10,7 @@
         <item name="colorPrimary">@color/theme_default_primary</item>
         <item name="colorPrimaryDark">@color/theme_default_primary_dark</item>
         <item name="colorAccent">@color/theme_default_accent</item>
-        <item name="colorControlHighlight">@color/theme_default_accent_light</item>
+        <item name="colorControlHighlight">@color/theme_default_primary</item>
 
     </style>
 
@@ -36,11 +36,11 @@
     </style>
 
     <style name="activeButtonStyle" parent="dialog_buttons">
-        <item name="android:textColor">@color/theme_default_primary</item>
+        <item name="android:textColor">@color/theme_default_primary_dark</item>
     </style>
 
     <style name="inactiveButtonStyle" parent="dialog_buttons">
-        <item name="android:textColor">@color/theme_default_primary_light</item>
+        <item name="android:textColor">@color/theme_default_primary</item>
     </style>
 
     <style name="editTextStyle">
