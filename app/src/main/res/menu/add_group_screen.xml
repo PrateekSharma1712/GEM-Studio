@@ -9,4 +9,10 @@
         android:title="@string/button_edit"
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/deleteGroup"
+        android:icon="@drawable/ic_action_delete"
+        android:title="@string/button_delete"
+        app:showAsAction="always"/>
+
 </menu>

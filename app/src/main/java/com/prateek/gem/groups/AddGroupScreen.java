@@ -103,6 +103,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
             vMemberCardView.setVisibility(View.GONE);
             vItemCardView.setVisibility(View.GONE);
             vGroupName.clearFocus();
+        } else {
             AppDataManager.hideKeyboard(vGroupName);
         }
 

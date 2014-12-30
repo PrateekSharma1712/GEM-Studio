@@ -40,7 +40,8 @@
         </activity>
         <activity
             android:name=".groups.AddGroupScreen"
-            android:parentActivityName=".groups.MainLandingScreen" >
+            android:parentActivityName=".groups.MainLandingScreen"
+            android:windowSoftInputMode="stateHidden|adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.prateek.gem.groups.MainLandingScreen" />
