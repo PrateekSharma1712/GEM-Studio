@@ -81,7 +81,7 @@ public class DebugLogger {
 		if (id == null) {
 			id = AppConstants.EMPTY_STRING;
 		}
-		debugLog(id + " : " + log);
+		debugLog("!@"+id + " : " + log);
 	}
 	
 	public static void initLog(Context context) {

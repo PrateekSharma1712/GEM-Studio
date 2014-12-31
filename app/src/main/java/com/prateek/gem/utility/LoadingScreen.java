@@ -38,7 +38,7 @@ public class LoadingScreen {
             progressDialog = new MyProgressDialog(context,dialogText);
         }
 
-
+        DebugLogger.message("Showing Progress Dialog");
         progressDialog.show();
 
     }
@@ -50,6 +50,7 @@ public class LoadingScreen {
      */
     public static void updateIndicatorMessage(String message) {
         if (progressDialog != null) {
+            DebugLogger.message("Updating indicator message::"+message);
             progressDialog.setMessage(message);
         }
     }

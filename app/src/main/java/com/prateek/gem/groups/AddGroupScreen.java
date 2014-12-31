@@ -64,6 +64,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
     private Intent mMemberScreenIntent = null;
     private Intent mItemScreenIntent = null;
     private MenuItem vEditGroup = null;
+    private MenuItem vDeleteGroup = null;
     private boolean isEditMode = false;
     private long recordedTime;
     Group recentlyAddedGroup = null;
@@ -148,6 +149,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.add_group_screen, menu);
         vEditGroup = menu.findItem(R.id.editGroup);
+        vDeleteGroup = menu.findItem(R.id.deleteGroup);
 
         if(isNew) {
             isEditMode = true;
@@ -163,18 +165,19 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         switch (id) {
-            case R.id.editGroup:
-                if(isEditMode) {
+            case R.id.editGroup: {
+                if (isEditMode) {
                     //save/update group
                     saveGroup();
-
-                    //finish();
                 } else {
                     isEditMode = true;
                     vEditGroup.setIcon(R.drawable.ic_action_done);
                     //make image, text field enabled
                 }
                 toggleEditMode();
+            }
+            case R.id.deleteGroup:
+
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -339,14 +342,12 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
 
         @Override
         protected void onPreExecute() {
-            // TODO Auto-generated method stub
             super.onPreExecute();
             LoadingScreen.showLoading(baseActivity,"Adding Group "+Utils.stringify(vGroupName.getText()));
         }
 
         @Override
         protected Integer doInBackground(Void... params) {
-            // TODO Auto-generated method stub
             Long d = new Date().getTime();
             if(originalUri == null){
                 String defaultPath = "0";
@@ -389,11 +390,16 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
 
         @Override
         protected void onPostExecute(Integer result) {
-            // TODO Auto-generated method stub
             super.onPostExecute(result);
             LoadingScreen.updateIndicatorMessage("Adding Group Owner");
             if(result > 0){
-                new AddMemberTask().execute(new Integer[]{result});
+                if(isNew) {
+                    new AddMemberTask().execute(new Integer[]{result});
+                } else {
+                    Utils.showToast(baseActivity, "Updated Successfully");
+                    LoadingScreen.dismissProgressDialog();
+                    finish();
+                }
             }
         }
     }
@@ -402,7 +408,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
 
         @Override
         protected Boolean doInBackground(Integer... params) {
-            // TODO Auto-generated method stub
+            DebugLogger.message("AddMemberTask::doInBackground");
             List<NameValuePair> list = new ArrayList<NameValuePair>();
             list.add(new BasicNameValuePair(DB.TMembers.GROUP_ID_FK,""+params[0]));
             list.add(new BasicNameValuePair(DB.TMembers.NAME,AppSharedPreference.getAccPreference(AppConstants.ADMIN_NAME)));
@@ -411,35 +417,45 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
             String json = handler.makeServiceCall(AppConstants.URL_API, AppConstants.REQUEST_METHOD_POST,list);
             JSONObject object = null;
             try{
+                DebugLogger.message("in try");
+
                 object = new JSONObject(json);
                 if(!object.getBoolean("error")){
+                    DebugLogger.message("no error");
                     addedMemberIntoGroup = object.getInt("id");
                     return true;
                 }
             }catch(JSONException e){
                 e.printStackTrace();
             }
+            DebugLogger.message("after try");
             return false;
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
-            // TODO Auto-generated method stub
             super.onPostExecute(result);
-
+            DebugLogger.message("result"+result);
             if(result){
+                DebugLogger.message("result is true");
                 recentlyAddedGroup.setMembersCount(1);
 
                 long rowId = DBImpl.addGroup(recentlyAddedGroup);
                 recentlyAddedGroup.setGroupId((int) rowId);
 
                 DBImpl.addAdminToGroup(addedMemberIntoGroup, recentlyAddedGroup.getGroupIdServer());
-
+                DebugLogger.message("dismissProgressDialog");
                 LoadingScreen.dismissProgressDialog();
                 finish();
+
             }
         }
     }
 
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(!isNew && recentlyAddedGroup != null)
+            DBImpl.updateLastUpdated(recentlyAddedGroup.getGroupIdServer(), Utils.getCurrentTimeInMilliSecs());
+    }
 }

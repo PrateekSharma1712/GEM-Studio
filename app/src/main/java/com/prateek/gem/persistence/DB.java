@@ -15,7 +15,7 @@ public class DB extends SQLiteOpenHelper{
 
     private static Context context;
     public static final String DATABASE_NAME = "gemdatabase";
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 6;
     private static DB mInstance = null;
 
     public class TGroups{
@@ -28,6 +28,7 @@ public class DB extends SQLiteOpenHelper{
         public static final String TOTALOFEXPENSE = "total_of_expense";
         public static final String TOTALMEMBERS = "total_members";
         public static final String ADMIN = "admin";
+        public static final String LASTUPDATEDON = "lastupdatedon";
 
         public static final String CREATE_QUERY_GROUPS = "CREATE TABLE IF NOT EXISTS "+ TGROUPS+" ("
                 + GROUPID
@@ -45,7 +46,10 @@ public class DB extends SQLiteOpenHelper{
                 + TOTALMEMBERS
                 + " int, "
                 + ADMIN
-                + " text)";
+                + " text, "
+                + LASTUPDATEDON
+                + " text"
+                + ")";
 
     }
 

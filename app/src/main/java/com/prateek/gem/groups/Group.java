@@ -7,19 +7,20 @@ import com.prateek.gem.AppConstants;
 import com.prateek.gem.AppSharedPreference;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-public class Group implements Parcelable{
+public class Group implements Parcelable, Comparable<Group>{
 
 	private Integer groupId;
-	private Integer groupIdServer;
+    private Integer groupIdServer;
 	private String groupName;
 	private String groupIcon;
 	private String date;
 	private Float totalOfExpense;
 	private Integer membersCount;
 	private String admin;
-
+    private String lastUpdatedOn;
 	
 
 	public Group(Integer groupId, Integer groupIdServer, String groupName,
@@ -211,5 +212,18 @@ public class Group implements Parcelable{
         group.setTotalOfExpense(0F);
         group.setMembersCount(0);
         return group;
+    }
+
+    public String getLastUpdatedOn() {
+        return lastUpdatedOn;
+    }
+
+    public void setLastUpdatedOn(String lastUpdatedOn) {
+        this.lastUpdatedOn = lastUpdatedOn;
+    }
+
+    @Override
+    public int compareTo(Group another) {
+        return Long.compare(Long.parseLong(another.getLastUpdatedOn()), Long.parseLong(this.getLastUpdatedOn()));
     }
 }
