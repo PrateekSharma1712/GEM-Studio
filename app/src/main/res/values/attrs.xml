@@ -36,4 +36,6 @@
             <enum name="right" value="3"/>
         </attr>
     </declare-styleable>
+
+    <attr name="floatingHintEditTextStyle" format="reference" />
 </resources>

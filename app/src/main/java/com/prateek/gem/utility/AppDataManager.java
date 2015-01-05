@@ -31,7 +31,7 @@ import java.util.Locale;
 
 public class AppDataManager {
 
-	// single instance for BBDataManager
+	// single instance for AppDataManager
 	private static AppDataManager instanceManager = null;
 	// it is to hold the application baseActivity
 	public static Context appContext = null;
@@ -47,23 +47,6 @@ public class AppDataManager {
 			instanceManager = new AppDataManager();
 		}
 		return instanceManager;
-	}
-
-	/**
-	 * Method to hide keyboard
-	 * 
-	 * @param eText
-	 * 
-	 * @return none
-	 */
-	public static void hideKeyboard(EditText eText) {
-		DebugLogger.method("BBDataManager :: hideKeyboard");
-		DebugLogger.message("Hide Keyboard");
-		InputMethodManager manager = (InputMethodManager) appContext
-				.getSystemService(Context.INPUT_METHOD_SERVICE);
-		if (manager != null && eText != null) {
-			manager.hideSoftInputFromWindow(eText.getWindowToken(), 0);
-		}
 	}
 
 	/**

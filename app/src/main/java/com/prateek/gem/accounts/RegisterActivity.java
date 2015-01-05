@@ -63,7 +63,7 @@ public class RegisterActivity extends BaseActivity {
 
             @Override
             public void onClick(View v) {
-
+                Utils.hideKeyboard(adminName);
                 name = Utils.stringify(adminName.getText());
                 email = Utils.stringify(emailSpinner.getSelectedItem().toString());
                 String code = Utils.stringify(numbercode.getText());

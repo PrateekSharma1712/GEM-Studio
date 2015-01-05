@@ -18,6 +18,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -54,6 +55,23 @@ public class Utils {
     {
         //I Luv India :)
         return Calendar.getInstance(TimeZone.getTimeZone("GMT+5:30")).getTimeInMillis();
+    }
+
+    /**
+     * Method to hide keyboard
+     *
+     * @param eText
+     *
+     * @return none
+     */
+    public static void hideKeyboard(EditText eText) {
+        DebugLogger.method("BBDataManager :: hideKeyboard");
+        DebugLogger.message("Hide Keyboard");
+        InputMethodManager manager = (InputMethodManager) AppDataManager.appContext
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (manager != null && eText != null) {
+            manager.hideSoftInputFromWindow(eText.getWindowToken(), 0);
+        }
     }
 
     /*

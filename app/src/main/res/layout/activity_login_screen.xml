@@ -41,7 +41,7 @@
 
     </LinearLayout>
 
-    <EditText
+    <com.prateek.gem.widgets.FloatingHint
         android:id="@+id/code"
         style="@style/editTextStyle"
         android:layout_width="60dp"
@@ -52,7 +52,7 @@
         android:inputType="phone"
         android:text="@string/code" />
 
-    <EditText
+    <com.prateek.gem.widgets.FloatingHint
         android:id="@+id/phoneNumber"
         style="@style/editTextStyle"
         android:layout_width="wrap_content"
@@ -68,10 +68,10 @@
         android:nextFocusForward="@+id/password"
         android:singleLine="true">
 
-    </EditText>
+    </com.prateek.gem.widgets.FloatingHint>
 
 
-    <EditText
+    <com.prateek.gem.widgets.FloatingHint
         android:id="@+id/password"
         style="@style/editTextStyle"
         android:layout_width="match_parent"

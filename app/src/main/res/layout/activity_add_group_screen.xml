@@ -36,7 +36,7 @@
                     android:contentDescription="@string/group_icon"
                     android:src="@drawable/ic_group_large" />
 
-                <EditText
+                <com.prateek.gem.widgets.FloatingHint
                     android:id="@+id/vGroupName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

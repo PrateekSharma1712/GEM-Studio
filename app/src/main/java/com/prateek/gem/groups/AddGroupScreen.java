@@ -105,7 +105,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
             vItemCardView.setVisibility(View.GONE);
             vGroupName.clearFocus();
         } else {
-            AppDataManager.hideKeyboard(vGroupName);
+            Utils.hideKeyboard(vGroupName);
         }
 
 
@@ -154,6 +154,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
         if(isNew) {
             isEditMode = true;
             vEditGroup.setIcon(R.drawable.ic_action_done);
+            vDeleteGroup.setVisible(false);
         }
         return true;
     }
@@ -167,6 +168,8 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
         switch (id) {
             case R.id.editGroup: {
                 if (isEditMode) {
+                    Utils.hideKeyboard(vGroupName);
+
                     //save/update group
                     saveGroup();
                 } else {

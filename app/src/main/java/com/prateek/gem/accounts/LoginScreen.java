@@ -76,8 +76,10 @@ public class LoginScreen extends BaseActivity {
             registerButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Utils.hideKeyboard(mCodeView);
                     Intent intent = new Intent(LoginScreen.this, RegisterActivity.class);
                     startActivity(intent);
+
                 }
             });
 
@@ -86,6 +88,7 @@ public class LoginScreen extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     if (Utils.hasConnection(baseActivity)) {
+                        Utils.hideKeyboard(mCodeView);
                         attemptLogin();
                     } else {
                         Utils.showToast(baseActivity, getString(R.string.nonetwork));
