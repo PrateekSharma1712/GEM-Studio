@@ -11,7 +11,6 @@ import com.prateek.gem.logger.DebugLogger;
 import com.prateek.gem.utility.Utils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -100,8 +99,8 @@ public class DBImpl extends DB {
         ContentValues cv = new ContentValues();
         cv = new ContentValues();
         cv.put(TMembers.MEMBER_ID_SERVER, addedMemberIntoGroup);
-        cv.put(TMembers.NAME, AppSharedPreference.getAccPreference(AppConstants.ADMIN_NAME));
-        cv.put(TMembers.PHONE_NUMBER, AppSharedPreference.getAccPreference(AppConstants.ADMIN_PHONE));
+        cv.put(TMembers.NAME, AppSharedPreference.getPreferenceString(AppConstants.ADMIN_NAME));
+        cv.put(TMembers.PHONE_NUMBER, AppSharedPreference.getPreferenceString(AppConstants.ADMIN_PHONE));
         cv.put(TMembers.GROUP_ID_FK, groupIdFk);
         long rowId = insert(TMembers.TMEMBERS,cv);
         if(rowId > 0)
@@ -109,7 +108,7 @@ public class DBImpl extends DB {
         return rowId;
     }
 
-    private static long insert(String tableName, ContentValues cv) {
+    public static long insert(String tableName, ContentValues cv) {
         return getDatabase().insert(tableName,null,cv);
     }
 

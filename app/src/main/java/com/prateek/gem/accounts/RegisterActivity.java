@@ -206,7 +206,7 @@ public class RegisterActivity extends BaseActivity {
                         }
                     };
 
-                    if(Utils.hasConnection(baseActivity)){
+                    if(Utils.isConnected(baseActivity)){
                         checkRegistrationTask.execute(number,null,null);
                     }
                     //new AddAdmintask().execute(new String[]{name,number,code,passwordValue});

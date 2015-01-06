@@ -46,7 +46,7 @@ public class LoginScreen extends BaseActivity {
         DebugLogger.message("onCreate");
         super.onCreate(savedInstanceState);
         baseActivity = this;
-        String regId = AppSharedPreference.getAccPreference(AppConstants.ADMIN_ID);
+        String regId = AppSharedPreference.getPreferenceString(AppConstants.ADMIN_ID);
         DebugLogger.message("regId :: "+regId);
         if(regId != null && !TextUtils.isEmpty(regId)) {
             finish();
@@ -87,7 +87,7 @@ public class LoginScreen extends BaseActivity {
             loginButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (Utils.hasConnection(baseActivity)) {
+                    if (Utils.isConnected(baseActivity)) {
                         Utils.hideKeyboard(mCodeView);
                         attemptLogin();
                     } else {
@@ -114,11 +114,11 @@ public class LoginScreen extends BaseActivity {
     protected void onResume() {
         super.onResume();
         DebugLogger.method("onResume");
-        String regId = AppSharedPreference.getAccPreference(AppConstants.ADMIN_ID);
+        String regId = AppSharedPreference.getPreferenceString(AppConstants.ADMIN_ID);
         DebugLogger.message("regId :: "+regId);
         if(regId != null && !TextUtils.isEmpty(regId)) {
-            String number = AppSharedPreference.getAccPreference(AppConstants.ADMIN_PHONE);
-            String password = AppSharedPreference.getAccPreference(AppConstants.ADMIN_PASSWORD);
+            String number = AppSharedPreference.getPreferenceString(AppConstants.ADMIN_PHONE);
+            String password = AppSharedPreference.getPreferenceString(AppConstants.ADMIN_PASSWORD);
             phoneNumberView.setText(number);
             mPasswordView.setText(password);
             finish();
@@ -242,12 +242,16 @@ public class LoginScreen extends BaseActivity {
                 finish();
                 startActivity(mainLandingIntent);
             }
-            else{
-                System.out.println("Message "+message);
-                if(message.equals("passwordwrong")){
-                    mPasswordView.setError(getString(R.string.error_incorrect_password));
-                }else if(message.equals("usernotfound")){
-                    phoneNumberView.setError(getString(R.string.notregistered));
+            else {
+                System.out.println("Message " + message);
+                if (message != null) {
+                    if (message.equals("passwordwrong")) {
+                        mPasswordView.setError(getString(R.string.error_incorrect_password));
+                    } else if (message.equals("usernotfound")) {
+                        phoneNumberView.setError(getString(R.string.notregistered));
+                    }
+                } else {
+                    Utils.showToast(baseActivity, "Something went wrong, please try again");
                 }
             }
             mAuthTask = null;

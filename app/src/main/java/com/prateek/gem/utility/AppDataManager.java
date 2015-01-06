@@ -17,12 +17,13 @@ import android.graphics.RectF;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.telephony.PhoneNumberUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.prateek.gem.AppConstants;
+import com.prateek.gem.AppSharedPreference;
 import com.prateek.gem.groups.Group;
 import com.prateek.gem.logger.DebugLogger;
+import com.prateek.gem.model.Users;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class AppDataManager {
 
     private static Group mGroup = null;
     private static ArrayList<Group> mGroups = new ArrayList<Group>();
+    private static Users user = new Users();
 
 	public static AppDataManager sharedManager() {
 		if (instanceManager == null) {
@@ -209,4 +211,16 @@ public class AppDataManager {
         return mGroup;
     }
 
+    public static Users getUser() {
+        return user;
+    }
+
+    public static void setUser() {
+        user = new Users();
+        user.setEmail(AppSharedPreference.getPreferenceString(AppConstants.ADMIN_EMAIL));
+        user.setGcmRegId(AppSharedPreference.getPreferenceString(AppConstants.ADMIN_ID));
+        user.setUserName(AppSharedPreference.getPreferenceString(AppConstants.ADMIN_NAME));
+        user.setPhoneNumber(AppSharedPreference.getPreferenceString(AppConstants.ADMIN_PHONE));
+        user.setPassword(AppSharedPreference.getPreferenceString(AppConstants.ADMIN_PASSWORD));
+    }
 }

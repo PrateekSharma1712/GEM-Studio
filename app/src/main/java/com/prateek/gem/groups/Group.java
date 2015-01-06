@@ -7,7 +7,6 @@ import com.prateek.gem.AppConstants;
 import com.prateek.gem.AppSharedPreference;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class Group implements Parcelable, Comparable<Group>{
@@ -207,7 +206,7 @@ public class Group implements Parcelable, Comparable<Group>{
         group.setGroupId(0);
         group.setGroupIdServer(0);
         group.setGroupIcon("0");
-        group.setAdmin(AppSharedPreference.getAccPreference(AppConstants.ADMIN_NAME));
+        group.setAdmin(AppSharedPreference.getPreferenceString(AppConstants.ADMIN_NAME));
         group.setGroupName("Personal");
         group.setTotalOfExpense(0F);
         group.setMembersCount(0);

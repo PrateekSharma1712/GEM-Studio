@@ -1,19 +1,26 @@
 package com.prateek.gem.groups;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.prateek.gem.AppConstants;
+import com.prateek.gem.AppSharedPreference;
 import com.prateek.gem.MainActivity;
 import com.prateek.gem.R;
 import com.prateek.gem.expenses.AddExpenseActivity;
 import com.prateek.gem.expenses.ExpensesActivity;
 import com.prateek.gem.logger.DebugLogger;
 import com.prateek.gem.persistence.DBImpl;
+import com.prateek.gem.service.FirstTimeLoadService;
 import com.prateek.gem.utility.AppDataManager;
+import com.prateek.gem.utility.LoadingScreen;
+import com.prateek.gem.utility.Utils;
 import com.prateek.gem.widgets.AddFloatingActionButton;
 
 public class MainLandingScreen extends MainActivity {
@@ -24,9 +31,13 @@ public class MainLandingScreen extends MainActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     private AddFloatingActionButton vAddGroupButton;
 
-    Intent mAddGroupScreenIntent = null;
-    Intent mExpensesScreenIntent = null;
-    Intent mAddExpensesScreenIntent = null;
+    private Intent mAddGroupScreenIntent = null;
+    private Intent mExpensesScreenIntent = null;
+    private Intent mAddExpensesScreenIntent = null;
+    private Intent dataLoadingIntent = null;
+
+    private IntentFilter successIntentFilter;
+    private MySuccessReceiver successReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +70,46 @@ public class MainLandingScreen extends MainActivity {
                 startActivity(mAddGroupScreenIntent);
             }
         });
+
+        AppDataManager.setUser();
+        DebugLogger.message(AppDataManager.getUser());
+
+        successIntentFilter = new IntentFilter(AppConstants.SUCCESS_RECEIVER);
+        successIntentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        successReceiver = new MySuccessReceiver();
+        registerReceiver(successReceiver, successIntentFilter);
+
+		/* One time load code */
+        if(!isFirstTimeLoadDone()){
+            //Load first time setup if preferences doesnot have
+            doFirstTimeLoad();
+        }else{
+            updateGroups();
+        }
+
+    }
+
+    private void updateGroups() {
+        if(mGroupsAdapter != null) {
+            mGroupsAdapter.setGroups(DBImpl.getGroups());
+            mGroupsAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void doFirstTimeLoad() {
+        if(Utils.isConnected(baseActivity)){
+            LoadingScreen.showLoading(baseActivity, "Loading data, if you are old user");
+            dataLoadingIntent = new Intent(MainLandingScreen.this, FirstTimeLoadService.class);
+            startService(dataLoadingIntent);
+        }else{
+            Utils.showToast(this, getString(R.string.nonetwork));
+        }
+
+    }
+
+    private boolean isFirstTimeLoadDone() {
+        //Return true if first time load key has true value
+        return AppSharedPreference.getPreferenceBoolean(AppConstants.ONETIME_LOAD);
 
     }
 
@@ -111,5 +162,22 @@ public class MainLandingScreen extends MainActivity {
 
         mGroupsAdapter.setGroups(DBImpl.getGroups());
         mGroupsAdapter.notifyDataSetChanged();
+    }
+
+    public class MySuccessReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            LoadingScreen.dismissProgressDialog();
+            updateUI();
+            if(intent.getBooleanExtra("done", false)){
+                Utils.showToast(context, "Loaded successfully");
+            }
+        }
+
+    }
+
+    private void updateUI() {
+        AppSharedPreference.storePreferences(AppConstants.ONETIME_LOAD, true);
     }
 }

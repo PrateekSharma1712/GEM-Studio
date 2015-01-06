@@ -367,7 +367,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
             }else{
                 list.add(new BasicNameValuePair(DB.TGroups.GROUPICON,recordedTime+".jpg"));
             }
-            list.add(new BasicNameValuePair("ADMIN",""+ AppSharedPreference.getAccPreference(AppConstants.ADMIN_PHONE)));
+            list.add(new BasicNameValuePair("ADMIN",""+ AppSharedPreference.getPreferenceString(AppConstants.ADMIN_PHONE)));
             list.add(new BasicNameValuePair(AppConstants.SERVICE_ID, ""+ AppConstants.ServiceIDs.ADD_GROUP));
             handler = new ServiceHandler();
             String json = handler.makeServiceCall(AppConstants.URL_API, AppConstants.REQUEST_METHOD_POST,list);
@@ -414,8 +414,8 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
             DebugLogger.message("AddMemberTask::doInBackground");
             List<NameValuePair> list = new ArrayList<NameValuePair>();
             list.add(new BasicNameValuePair(DB.TMembers.GROUP_ID_FK,""+params[0]));
-            list.add(new BasicNameValuePair(DB.TMembers.NAME,AppSharedPreference.getAccPreference(AppConstants.ADMIN_NAME)));
-            list.add(new BasicNameValuePair(DB.TMembers.PHONE_NUMBER,AppSharedPreference.getAccPreference(AppConstants.ADMIN_PHONE)));
+            list.add(new BasicNameValuePair(DB.TMembers.NAME,AppSharedPreference.getPreferenceString(AppConstants.ADMIN_NAME)));
+            list.add(new BasicNameValuePair(DB.TMembers.PHONE_NUMBER,AppSharedPreference.getPreferenceString(AppConstants.ADMIN_PHONE)));
             list.add(new BasicNameValuePair(AppConstants.SERVICE_ID, ""+ AppConstants.ServiceIDs.ADD_MEMBER));
             String json = handler.makeServiceCall(AppConstants.URL_API, AppConstants.REQUEST_METHOD_POST,list);
             JSONObject object = null;

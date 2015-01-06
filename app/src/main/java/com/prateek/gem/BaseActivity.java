@@ -12,6 +12,7 @@ import com.prateek.gem.groups.Group;
 import com.prateek.gem.groups.MainLandingScreen;
 import com.prateek.gem.logger.DebugLogger;
 import com.prateek.gem.utility.AppDataManager;
+import com.prateek.gem.utility.Utils;
 
 import java.io.IOException;
 
@@ -32,11 +33,13 @@ public abstract class BaseActivity extends ActionBarActivity {
         mainLandingIntent = new Intent(baseActivity,MainLandingScreen.class);
         AppDataManager.appContext = getApplicationContext();
         AppDataManager.currentScreen = baseActivity;
-        getGCMRegId();
+        if(Utils.isConnected(baseActivity)) {
+            getGCMRegId();
+        }
     }
 
     protected void getGCMRegId() {
-        String regId = AppSharedPreference.getAccPreference(AppConstants.ADMIN_ID);
+        String regId = AppSharedPreference.getPreferenceString(AppConstants.ADMIN_ID);
         if (regId == null || regId.equals(AppConstants.EMPTY_STRING)) {
             if (checkPlayServices()) {
                 gcm = GoogleCloudMessaging.getInstance(this);
