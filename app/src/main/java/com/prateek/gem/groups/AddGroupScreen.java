@@ -90,6 +90,12 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -104,9 +110,12 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
         selfIntent = getIntent();
         if(selfIntent != null) {
             isNew = selfIntent.getBooleanExtra(AppConstants.GROUP_SOURCE, Boolean.FALSE);
-            DebugLogger.message("isNew"+isNew);
-            if(!isNew) {
+            DebugLogger.message("isNew" + isNew);
+            if (!isNew) {
                 recentlyAddedGroup = selfIntent.getParcelableExtra(AppConstants.GROUP);
+                if(recentlyAddedGroup == null) {
+                    recentlyAddedGroup = AppDataManager.getCurrentGroup();
+                }
                 vGroupName.setText(recentlyAddedGroup.getGroupName());
                 vGroupName.setHint(R.string.groups_edit_groupname);
             }
@@ -120,6 +129,9 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
             vGroupName.clearFocus();
         } else {
             Utils.hideKeyboard(vGroupName);
+            updateExpenseView();
+            updateMemberView();
+            updateItemView();
         }
 
 
@@ -140,9 +152,6 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
             }
         });
 
-        updateExpenseView();
-        updateMemberView();
-        updateItemView();
         toggleEditMode();
     }
 
@@ -493,7 +502,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
         if(members.size() > 0) {
             addMoreView(getString(R.string.viewall), getString(R.string.more), CardViewType.MEMBER, layout);
         } else {
-            addSingleMoreView("No Members, "+getString(R.string.taptoadd), CardViewType.MEMBER, layout);
+            addSingleMoreView("No Members, " + getString(R.string.taptoadd), CardViewType.MEMBER, layout);
         }
     }
 
@@ -522,24 +531,28 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
         ((LinearLayout) layout).addView(view);
     }
 
-    private void addMoreView(String textRight, String textLeft, final CardViewType cardType, View layout) {
+    private void addMoreView(String textLeft, String textRight, final CardViewType cardType, View layout) {
         View view = LayoutInflater.from(this).inflate(R.layout.more, null, false);
         LinearLayout.LayoutParams singleViewParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
 
         TextView viewLabel = (TextView) view.findViewById(R.id.viewLabel);
         TextView moreLabel = (TextView) view.findViewById(R.id.moreLabel);
-        if(textRight == null) {
-            viewLabel.setVisibility(View.GONE);
-            singleViewParams.weight = 0;
-            viewLabel.setLayoutParams(singleViewParams);
-        }
 
-        if(textLeft == null) {
-            moreLabel.setVisibility(View.GONE);
-        }
-
-        moreLabel.setText(textRight);
         viewLabel.setText(textLeft);
+        moreLabel.setText(textRight);
+
+        viewLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(cardType == CardViewType.MEMBER) {
+                    mMemberScreenIntent = new Intent(AddGroupScreen.this, MembersActivity.class);
+                    startActivity(mMemberScreenIntent);
+                } else if(cardType == CardViewType.EXPENSE) {
+                    mExenseScreenIntent = new Intent(AddGroupScreen.this, ExpensesActivity.class);
+                    startActivity(mExenseScreenIntent);
+                }
+            }
+        });
 
         moreLabel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -554,18 +567,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
             }
         });
 
-        viewLabel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(cardType == CardViewType.MEMBER) {
-                    mMemberScreenIntent = new Intent(AddGroupScreen.this, MembersActivity.class);
-                    startActivity(mMemberScreenIntent);
-                } else if(cardType == CardViewType.EXPENSE) {
-                    mExenseScreenIntent = new Intent(AddGroupScreen.this, ExpensesActivity.class);
-                    startActivity(mExenseScreenIntent);
-                }
-            }
-        });
+
         ((LinearLayout) layout).addView(view);
 
     }

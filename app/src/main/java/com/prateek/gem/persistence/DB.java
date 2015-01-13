@@ -237,6 +237,13 @@ public class DB extends SQLiteOpenHelper{
         database.execSQL(TCategories.CREATE_QUERY_CATEGORY);
 
 
+
+        if(!AppSharedPreference.getPreferenceBoolean(AppConstants.ALTER_MEMBER_TABLE1)) {
+            DebugLogger.message("AppSharedPreference.getPreferenceBoolean(AppConstants.ALTER_MEMBER_TABLE1)"+AppSharedPreference.getPreferenceBoolean(AppConstants.ALTER_MEMBER_TABLE1));
+            database.execSQL(TMembers.ALTER_MEMBERS_TABLE1);
+            AppSharedPreference.storeAccPreference(AppConstants.ALTER_MEMBER_TABLE1, true);
+            DebugLogger.message("AppSharedPreference.getPreferenceBoolean(AppConstants.ALTER_MEMBER_TABLE1)"+AppSharedPreference.getPreferenceBoolean(AppConstants.ALTER_MEMBER_TABLE1));
+        }
     }
 
     @Override

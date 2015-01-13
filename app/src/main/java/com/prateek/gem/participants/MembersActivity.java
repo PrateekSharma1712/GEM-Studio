@@ -35,8 +35,8 @@ public class MembersActivity extends MainActivity {
         super.onCreate(savedInstanceState);
         mAddMemberScreenIntent = new Intent(MembersActivity.this,AddMembersActivity.class);
 
-        vAddMembersButton = (AddFloatingActionButton) findViewById(R.id.vAddExpenseButton);
-        vMembersList = (RecyclerView) findViewById(R.id.vExpenses);
+        vAddMembersButton = (AddFloatingActionButton) findViewById(R.id.vAddMembersButton);
+        vMembersList = (RecyclerView) findViewById(R.id.vMembers);
 
         vMembersList.setHasFixedSize(true);
 

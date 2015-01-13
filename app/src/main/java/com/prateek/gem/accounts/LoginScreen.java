@@ -102,6 +102,7 @@ public class LoginScreen extends BaseActivity {
                 public boolean onEditorAction(TextView v, int id, KeyEvent event) {
                     if (id == R.id.login || id == EditorInfo.IME_NULL) {
                         attemptLogin();
+                        Utils.hideKeyboard(phoneNumberView);
                         return true;
                     }
                     return false;

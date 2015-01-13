@@ -163,5 +163,6 @@
     <string name="more">Add More</string>
     <string name="viewall">View all</string>
     <string name="taptoadd">Tap to add</string>
+    <string name="typeContactName">Type contact name..</string>
 
 </resources>
