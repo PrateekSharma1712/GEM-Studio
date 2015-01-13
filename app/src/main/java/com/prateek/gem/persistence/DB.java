@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.prateek.gem.App;
+import com.prateek.gem.AppConstants;
+import com.prateek.gem.AppSharedPreference;
 import com.prateek.gem.logger.DebugLogger;
 
 /**
@@ -15,7 +17,7 @@ public class DB extends SQLiteOpenHelper{
 
     private static Context context;
     public static final String DATABASE_NAME = "gemdatabase";
-    public static final int DATABASE_VERSION = 6;
+    public static final int DATABASE_VERSION = 7;
     private static DB mInstance = null;
 
     public class TGroups{
@@ -72,6 +74,8 @@ public class DB extends SQLiteOpenHelper{
                 + " text not null, "
                 + PHONE_NUMBER
                 + " text not null)";
+
+        public static final String ALTER_MEMBERS_TABLE1 = "ALTER TABLE "+ TMEMBERS +" ADD COLUMN "+GCM_REG_NO+" text";
     }
 
     public class TItems{
@@ -231,6 +235,8 @@ public class DB extends SQLiteOpenHelper{
         database.execSQL(TItems.CREATE_QUERY_ITEMS);
         database.execSQL(TSettlement.CREATE_QUERY_SETTLEMENT);
         database.execSQL(TCategories.CREATE_QUERY_CATEGORY);
+
+
     }
 
     @Override
@@ -243,6 +249,13 @@ public class DB extends SQLiteOpenHelper{
             db.execSQL("DROP TABLE IF EXISTS " + table);
         }*/
         onCreate(db);
+
+        if(!AppSharedPreference.getPreferenceBoolean(AppConstants.ALTER_MEMBER_TABLE1)) {
+            DebugLogger.message("AppSharedPreference.getPreferenceBoolean(AppConstants.ALTER_MEMBER_TABLE1)"+AppSharedPreference.getPreferenceBoolean(AppConstants.ALTER_MEMBER_TABLE1));
+            db.execSQL(TMembers.ALTER_MEMBERS_TABLE1);
+            AppSharedPreference.storeAccPreference(AppConstants.ALTER_MEMBER_TABLE1, true);
+            DebugLogger.message("AppSharedPreference.getPreferenceBoolean(AppConstants.ALTER_MEMBER_TABLE1)"+AppSharedPreference.getPreferenceBoolean(AppConstants.ALTER_MEMBER_TABLE1));
+        }
     }
 
     /**
@@ -275,4 +288,6 @@ public class DB extends SQLiteOpenHelper{
             database = null;
         }
     }
+
+    protected static String[] memberFields = new String[]{TMembers.MEMBER_ID, TMembers.MEMBER_ID_SERVER,TMembers.GCM_REG_NO,TMembers.GROUP_ID_FK, TMembers.NAME, TMembers.PHONE_NUMBER};
 }

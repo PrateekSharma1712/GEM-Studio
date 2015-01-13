@@ -8,7 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.prateek.gem.groups.Group;
+import com.prateek.gem.model.Group;
 import com.prateek.gem.groups.MainLandingScreen;
 import com.prateek.gem.logger.DebugLogger;
 import com.prateek.gem.utility.AppDataManager;

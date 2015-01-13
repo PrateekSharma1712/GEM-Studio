@@ -57,4 +57,14 @@
     <dimen name="dialog_margin_left_right">24dp</dimen>
     <dimen name="dialog_content_margin_bottom">16dp</dimen>
     <dimen name="dialog_button_bottom_margin">8dp</dimen>
+
+    <dimen name="smallest">10sp</dimen>
+    <dimen name="smaller">12sp</dimen>
+    <dimen name="small">14sp</dimen>
+    <dimen name="base">16sp</dimen>
+    <dimen name="large">18sp</dimen>
+    <dimen name="larger">20sp</dimen>
+    <dimen name="largest">22sp</dimen>
+
+    <dimen name="pad_base">8dp</dimen>
 </resources>

@@ -110,6 +110,7 @@
     <string name="search">Search</string>
     <string name="sync">Sync</string>
     <string name="groups_new_groupname">Enter New Group Name</string>
+    <string name="groups_edit_groupname">Tap on edit to edit group</string>
     <string name="title_activity_expense_searchable">Expense Search</string>
     <string name="title_activity_new_group">Add New Group</string>
     <string name="groups_addgroup_header">Add New Group</string>
@@ -158,5 +159,9 @@
     <string name="title_activity_expenses_actcity">Expenses</string>
     <string name="title_activity_members_activity">Members</string>
     <string name="title_activity_add_members_activity">Add Members</string>
+
+    <string name="more">Add More</string>
+    <string name="viewall">View all</string>
+    <string name="taptoadd">Tap to add</string>
 
 </resources>

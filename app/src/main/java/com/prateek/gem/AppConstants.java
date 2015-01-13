@@ -155,6 +155,8 @@ public class AppConstants {
     public static final String GROUP_SOURCE = "group_source";
     public static final String GROUP = "group";
 
+    public static final String ALTER_MEMBER_TABLE1 = "alter_table_member_1";
+
 }
 
 

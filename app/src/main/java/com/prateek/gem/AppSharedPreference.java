@@ -152,6 +152,28 @@ public class AppSharedPreference {
         DebugLogger.message("Account Preference is stored successfully.");
     }
 
+    /**
+     * Method to store the account preferences
+     *
+     * @param key
+     * @param value
+     * @return none
+     */
+    public static void storeAccPreference(String key, boolean value) {
+        DebugLogger.method("BBSharedPreference :: storeAccPreference");
+        if (key == null || key.equalsIgnoreCase(AppConstants.EMPTY_STRING)) {
+
+            DebugLogger
+                    .message("Key is null or empty. Account preferences can not be stored.");
+            return;
+        }
+        SharedPreferences.Editor editor = getEditor(AppConstants.CUSTOM_PREFERENCE,
+                AppDataManager.currentScreen);
+        editor.putBoolean(key, value);
+        editor.commit();
+        DebugLogger.message("Account Preference is stored successfully.");
+    }
+
     public static void storePreferences(String key, int value) {
         DebugLogger.method("BBSharedPreference :: storeAccPreference");
         if (key == null || key.equalsIgnoreCase(AppConstants.EMPTY_STRING)) {

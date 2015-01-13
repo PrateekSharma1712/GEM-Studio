@@ -12,19 +12,28 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.widget.CardView;
+import android.util.LayoutDirection;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.prateek.gem.AppConstants;
 import com.prateek.gem.AppSharedPreference;
 import com.prateek.gem.MainActivity;
 import com.prateek.gem.R;
+import com.prateek.gem.expenses.AddExpenseActivity;
 import com.prateek.gem.expenses.ExpensesActivity;
 import com.prateek.gem.helper.AppDialog;
 import com.prateek.gem.logger.DebugLogger;
+import com.prateek.gem.model.Group;
+import com.prateek.gem.model.Member;
+import com.prateek.gem.participants.AddMembersActivity;
+import com.prateek.gem.participants.MembersActivity;
 import com.prateek.gem.persistence.DB;
 import com.prateek.gem.persistence.DBImpl;
 import com.prateek.gem.service.ServiceHandler;
@@ -61,7 +70,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
     private CardView vMemberCardView = null;
     private CardView vItemCardView = null;
     private Intent mExenseScreenIntent = null, mAddExpenseScreenIntent = null;
-    private Intent mMemberScreenIntent = null;
+    private Intent mMemberScreenIntent = null, mAddMemberScreenIntent = null;
     private Intent mItemScreenIntent = null;
     private MenuItem vEditGroup = null;
     private MenuItem vDeleteGroup = null;
@@ -70,6 +79,10 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
     Group recentlyAddedGroup = null;
     ServiceHandler handler;
     int addedMemberIntoGroup;
+
+    public enum CardViewType {
+        EXPENSE, MEMBER, ITEM
+    }
 
     @Override
     protected int getLayoutResource() {
@@ -84,9 +97,9 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
         vExpenseCardView = (CardView) findViewById(R.id.vExpenseBrief);
         vMemberCardView = (CardView) findViewById(R.id.vMembersBrief);
         vItemCardView = (CardView) findViewById(R.id.vItemsBrief);
-        vExpenseCardView.startAnimation(Utils.inFromBottomAnimation(400));
-        vMemberCardView.startAnimation(Utils.inFromBottomAnimation(400));
-        vItemCardView.startAnimation(Utils.inFromBottomAnimation(400));
+        vExpenseCardView.startAnimation(Utils.inFromBottomAnimation(600));
+        vMemberCardView.startAnimation(Utils.inFromBottomAnimation(600));
+        vItemCardView.startAnimation(Utils.inFromBottomAnimation(600));
 
         selfIntent = getIntent();
         if(selfIntent != null) {
@@ -95,6 +108,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
             if(!isNew) {
                 recentlyAddedGroup = selfIntent.getParcelableExtra(AppConstants.GROUP);
                 vGroupName.setText(recentlyAddedGroup.getGroupName());
+                vGroupName.setHint(R.string.groups_edit_groupname);
             }
         }
 
@@ -126,6 +140,9 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
             }
         });
 
+        updateExpenseView();
+        updateMemberView();
+        updateItemView();
         toggleEditMode();
     }
 
@@ -460,5 +477,101 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
         super.onPause();
         if(!isNew && recentlyAddedGroup != null)
             DBImpl.updateLastUpdated(recentlyAddedGroup.getGroupIdServer(), Utils.getCurrentTimeInMilliSecs());
+    }
+
+    private void updateMemberView() {
+        ArrayList<Member> members = DBImpl.getMembers(recentlyAddedGroup.getGroupIdServer());
+        LinearLayout layout = (LinearLayout) findViewById(R.id.layoutMembersView);
+        View view = LayoutInflater.from(this).inflate(R.layout.member_mini_row, null, false);
+        TextView memberName = (TextView) view.findViewById(R.id.memberName);
+        TextView memberPhoneNumber = (TextView) view.findViewById(R.id.memberPhoneNumber);
+        for(Member member : members) {
+            memberName.setText(member.getMemberName());
+            memberPhoneNumber.setText(member.getPhoneNumber());
+            layout.addView(view);
+        }
+        if(members.size() > 0) {
+            addMoreView(getString(R.string.viewall), getString(R.string.more), CardViewType.MEMBER, layout);
+        } else {
+            addSingleMoreView("No Members, "+getString(R.string.taptoadd), CardViewType.MEMBER, layout);
+        }
+    }
+
+    private void updateExpenseView() {
+        LinearLayout layout = (LinearLayout) findViewById(R.id.layoutExpenseView);
+        addSingleMoreView("No Expenses, " + getString(R.string.taptoadd), CardViewType.EXPENSE, layout);
+    }
+
+    private void addSingleMoreView(String text, final CardViewType cardType, LinearLayout layout) {
+        View view = LayoutInflater.from(this).inflate(R.layout.singlemore, null, false);
+        TextView viewLabel = (TextView) view.findViewById(R.id.viewLabel);
+        viewLabel.setText(text);
+
+        viewLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(cardType == CardViewType.MEMBER) {
+                    mMemberScreenIntent = new Intent(AddGroupScreen.this, MembersActivity.class);
+                    startActivity(mMemberScreenIntent);
+                } else if(cardType == CardViewType.EXPENSE) {
+                    mExenseScreenIntent = new Intent(AddGroupScreen.this, ExpensesActivity.class);
+                    startActivity(mExenseScreenIntent);
+                }
+            }
+        });
+        ((LinearLayout) layout).addView(view);
+    }
+
+    private void addMoreView(String textRight, String textLeft, final CardViewType cardType, View layout) {
+        View view = LayoutInflater.from(this).inflate(R.layout.more, null, false);
+        LinearLayout.LayoutParams singleViewParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
+
+        TextView viewLabel = (TextView) view.findViewById(R.id.viewLabel);
+        TextView moreLabel = (TextView) view.findViewById(R.id.moreLabel);
+        if(textRight == null) {
+            viewLabel.setVisibility(View.GONE);
+            singleViewParams.weight = 0;
+            viewLabel.setLayoutParams(singleViewParams);
+        }
+
+        if(textLeft == null) {
+            moreLabel.setVisibility(View.GONE);
+        }
+
+        moreLabel.setText(textRight);
+        viewLabel.setText(textLeft);
+
+        moreLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(cardType == CardViewType.MEMBER) {
+                    mAddMemberScreenIntent = new Intent(AddGroupScreen.this, AddMembersActivity.class);
+                    startActivity(mAddMemberScreenIntent);
+                } else if(cardType == CardViewType.EXPENSE) {
+                    mAddExpenseScreenIntent = new Intent(AddGroupScreen.this, AddExpenseActivity.class);
+                    startActivity(mAddExpenseScreenIntent);
+                }
+            }
+        });
+
+        viewLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(cardType == CardViewType.MEMBER) {
+                    mMemberScreenIntent = new Intent(AddGroupScreen.this, MembersActivity.class);
+                    startActivity(mMemberScreenIntent);
+                } else if(cardType == CardViewType.EXPENSE) {
+                    mExenseScreenIntent = new Intent(AddGroupScreen.this, ExpensesActivity.class);
+                    startActivity(mExenseScreenIntent);
+                }
+            }
+        });
+        ((LinearLayout) layout).addView(view);
+
+    }
+
+    private void updateItemView() {
+        LinearLayout layout = (LinearLayout) findViewById(R.id.layoutItemsView);
+        addSingleMoreView("No Items, " + getString(R.string.taptoadd), CardViewType.ITEM, layout);
     }
 }

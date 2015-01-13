@@ -16,6 +16,7 @@ import com.prateek.gem.R;
 import com.prateek.gem.expenses.AddExpenseActivity;
 import com.prateek.gem.expenses.ExpensesActivity;
 import com.prateek.gem.logger.DebugLogger;
+import com.prateek.gem.model.Group;
 import com.prateek.gem.persistence.DBImpl;
 import com.prateek.gem.service.FirstTimeLoadService;
 import com.prateek.gem.utility.AppDataManager;
@@ -77,7 +78,7 @@ public class MainLandingScreen extends MainActivity {
         successIntentFilter = new IntentFilter(AppConstants.SUCCESS_RECEIVER);
         successIntentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         successReceiver = new MySuccessReceiver();
-        registerReceiver(successReceiver, successIntentFilter);
+
 
 		/* One time load code */
         if(!isFirstTimeLoadDone()){
@@ -89,11 +90,16 @@ public class MainLandingScreen extends MainActivity {
 
     }
 
-    private void updateGroups() {
-        if(mGroupsAdapter != null) {
-            mGroupsAdapter.setGroups(DBImpl.getGroups());
-            mGroupsAdapter.notifyDataSetChanged();
-        }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        registerReceiver(successReceiver, successIntentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(successReceiver);
     }
 
     private void doFirstTimeLoad() {
@@ -156,12 +162,7 @@ public class MainLandingScreen extends MainActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(mGroupsAdapter == null) {
-            mGroupsAdapter.setGroups(DBImpl.getGroups());
-        }
-
-        mGroupsAdapter.setGroups(DBImpl.getGroups());
-        mGroupsAdapter.notifyDataSetChanged();
+        updateGroups();
     }
 
     public class MySuccessReceiver extends BroadcastReceiver {
@@ -179,5 +180,15 @@ public class MainLandingScreen extends MainActivity {
 
     private void updateUI() {
         AppSharedPreference.storePreferences(AppConstants.ONETIME_LOAD, true);
+        updateGroups();
+    }
+
+    private void updateGroups() {
+        if(mGroupsAdapter == null) {
+            mGroupsAdapter = new GroupsAdapter(this);
+        }
+
+        mGroupsAdapter.setGroups(DBImpl.getGroups());
+        mGroupsAdapter.notifyDataSetChanged();
     }
 }

@@ -21,7 +21,7 @@ import android.widget.EditText;
 
 import com.prateek.gem.AppConstants;
 import com.prateek.gem.AppSharedPreference;
-import com.prateek.gem.groups.Group;
+import com.prateek.gem.model.Group;
 import com.prateek.gem.logger.DebugLogger;
 import com.prateek.gem.model.Users;
 

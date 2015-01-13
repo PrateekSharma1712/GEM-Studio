@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.IBinder;
 
 import com.prateek.gem.AppConstants;
@@ -12,6 +11,7 @@ import com.prateek.gem.AppConstants.ServiceIDs;
 import com.prateek.gem.model.Group;
 import com.prateek.gem.persistence.DB;
 import com.prateek.gem.persistence.DBImpl;
+import com.prateek.gem.utility.Utils;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -74,7 +74,7 @@ public class FirstTimeLoadService extends IntentService {
 			groupsArray = new JSONArray(jsonString);
 			for(int i = 0;i<groupsArray.length();i++){
 				jsonObject = groupsArray.getJSONObject(i);
-				Group group = new Group();
+                Group group = new Group();
 				ContentValues cv = new ContentValues();
 				cv.put(DB.TGroups.GROUPID_SERVER, jsonObject.getInt(DB.TGroups.GROUPID));				
 				cv.put(DB.TGroups.GROUPNAME, jsonObject.getString(DB.TGroups.GROUPNAME));
@@ -83,14 +83,15 @@ public class FirstTimeLoadService extends IntentService {
 				cv.put(DB.TGroups.TOTALMEMBERS, jsonObject.getInt(DB.TGroups.TOTALMEMBERS));
 				cv.put(DB.TGroups.TOTALOFEXPENSE, (float) jsonObject.getDouble(DB.TGroups.TOTALOFEXPENSE));
 				cv.put(DB.TGroups.ADMIN, jsonObject.getString("admin"));
+                cv.put(DB.TGroups.LASTUPDATEDON, Utils.getCurrentTimeInMilliSecs());
 				group.setGroupIdServer(jsonObject.getInt(DB.TGroups.GROUPID));
 				group.setGroupName(jsonObject.getString(DB.TGroups.GROUPNAME));
-				group.setGroupIcon(Uri.parse(jsonObject.getString(DB.TGroups.GROUPICON)));
+				group.setGroupIcon(jsonObject.getString(DB.TGroups.GROUPICON));
 				group.setDate(jsonObject.getString(DB.TGroups.DATEOFCREATION));
 				group.setMembersCount(jsonObject.getInt(DB.TGroups.TOTALMEMBERS));
 				group.setTotalOfExpense((float) jsonObject.getDouble(DB.TGroups.TOTALOFEXPENSE));
 				group.setAdmin(jsonObject.getString("admin"));
-				
+                group.setLastUpdatedOn(Utils.getCurrentTimeInMilliSecs());
 				//adding group for local references
 				groups.add(group);
 				

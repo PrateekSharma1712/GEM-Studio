@@ -13,6 +13,7 @@ import com.prateek.gem.AppConstants;
 import com.prateek.gem.BaseActivity;
 import com.prateek.gem.R;
 import com.prateek.gem.logger.DebugLogger;
+import com.prateek.gem.model.Group;
 import com.prateek.gem.utility.ImageLoader;
 
 import java.util.ArrayList;

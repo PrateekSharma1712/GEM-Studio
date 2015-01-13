@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
-import com.prateek.gem.groups.Group;
+import com.prateek.gem.model.Group;
 import com.prateek.gem.logger.DebugLogger;
 import com.prateek.gem.widgets.ConfirmationDialog;
 

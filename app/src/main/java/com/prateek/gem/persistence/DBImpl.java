@@ -6,8 +6,9 @@ import android.database.Cursor;
 
 import com.prateek.gem.AppConstants;
 import com.prateek.gem.AppSharedPreference;
-import com.prateek.gem.groups.Group;
+import com.prateek.gem.model.Group;
 import com.prateek.gem.logger.DebugLogger;
+import com.prateek.gem.model.Member;
 import com.prateek.gem.utility.Utils;
 
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ public class DBImpl extends DB {
                 group.setMembersCount(c.getInt(c.getColumnIndex(TGroups.TOTALMEMBERS)));
                 group.setTotalOfExpense(c.getFloat(c.getColumnIndex(TGroups.TOTALOFEXPENSE)));
                 group.setAdmin(c.getString(c.getColumnIndex(TGroups.ADMIN)));
-                group.setLastUpdatedOn(c.getString(c.getColumnIndex(TGroups.LASTUPDATEDON)));
+                group.setLastUpdatedOn(Long.parseLong(c.getString(c.getColumnIndex(TGroups.LASTUPDATEDON))));
                 mGroups.add(group);
             }while(c.moveToNext());
         }
@@ -82,7 +83,7 @@ public class DBImpl extends DB {
         return mGroups;
 
     }
-    
+
     public static long addGroup(Group group) {
         ContentValues cv = new ContentValues();
         cv.put(TGroups.GROUPID_SERVER, group.getGroupIdServer());
@@ -121,5 +122,23 @@ public class DBImpl extends DB {
 
     private static long update(String condition, String table, ContentValues cv) {
         return getDatabase().update(table, cv, condition, null);
+    }
+
+    public static ArrayList<Member> getMembers(int groupId) {
+        Cursor cursor = getDatabase().query(TMembers.TMEMBERS, memberFields, TMembers.GROUP_ID_FK + " = " + groupId, null, null, null, null);
+        ArrayList<Member> members = new ArrayList<>();
+        if(cursor.moveToFirst()) {
+            do {
+                Member member = new Member();
+                member.setMemberId(cursor.getInt(cursor.getColumnIndex(TMembers.MEMBER_ID)));
+                member.setMemberIdServer(cursor.getInt(cursor.getColumnIndex(TMembers.MEMBER_ID_SERVER)));
+                member.setPhoneNumber(cursor.getString(cursor.getColumnIndex(TMembers.PHONE_NUMBER)));
+                member.setGcmregNo(cursor.getString(cursor.getColumnIndex(TMembers.GCM_REG_NO)));
+                member.setGroupIdFk(cursor.getInt(cursor.getColumnIndex(TMembers.GROUP_ID_FK)));
+                member.setMemberName(cursor.getString(cursor.getColumnIndex(TMembers.NAME)));
+                members.add(member);
+            } while(cursor.moveToNext());
+        }
+        return members;
     }
 }
