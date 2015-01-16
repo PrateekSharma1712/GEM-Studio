@@ -65,45 +65,26 @@ public class Member extends ParcelableCompat implements Serializable{
 	public void setGroupIdFk(int groupIdFk) {
 		this.groupIdFk = groupIdFk;
 	}
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + groupIdFk;
-		result = prime * result + memberId;
-		result = prime * result
-				+ ((memberName == null) ? 0 : memberName.hashCode());
-		result = prime * result
-				+ ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
-		return result;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Member other = (Member) obj;
-		if (groupIdFk != other.groupIdFk)
-			return false;
-		if (memberId != other.memberId)
-			return false;
-		if (memberName == null) {
-			if (other.memberName != null)
-				return false;
-		} else if (!memberName.equals(other.memberName))
-			return false;
-		if (phoneNumber == null) {
-			if (other.phoneNumber != null)
-				return false;
-		} else if (!phoneNumber.equals(other.phoneNumber))
-			return false;
-		return true;
-	}
-	
-	public int getMemberIdServer() {
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Member member = (Member) o;
+
+        if (!phoneNumber.equals(member.phoneNumber)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return phoneNumber.hashCode();
+    }
+
+    public int getMemberIdServer() {
 		return memberIdServer;
 	}
 	public void setMemberIdServer(int memberIdServer) {

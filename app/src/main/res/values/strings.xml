@@ -164,5 +164,11 @@
     <string name="viewall">View all</string>
     <string name="taptoadd">Tap to add</string>
     <string name="typeContactName">Type contact name..</string>
+    <string name="no_contacts">No match found</string>
+
+    <string name="menu_search">Search</string>
+    <string name="alphabet">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+
+    <string name="already_exists">\"%s\" already exists</string>
 
 </resources>

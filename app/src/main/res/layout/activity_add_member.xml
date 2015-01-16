@@ -3,20 +3,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/existingMembersRecyclerView"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/vToolbar"
         android:layout_width="match_parent"
-        android:layout_height="150dp">
+        android:layout_height="100dp">
 
     </android.support.v7.widget.RecyclerView>
 
-    <EditText
-        android:id="@+id/searchContact"
+
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:name="com.prateek.gem.participants.ContactsListFragment"
+        android:id="@+id/contact_list"
+        android:layout_height="match_parent"
         android:layout_below="@id/existingMembersRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="kcsndkc ldnfl "
-        android:hint="@string/typeContactName"/>
+        android:layout_width="match_parent"/>
+
+    <include
+        layout="@layout/toolbar"
+        android:id="@+id/vToolbar" />
+
 
 </RelativeLayout>

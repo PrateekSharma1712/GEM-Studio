@@ -528,7 +528,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
                 }
             }
         });
-        ((LinearLayout) layout).addView(view);
+        layout.addView(view);
     }
 
     private void addMoreView(String textLeft, String textRight, final CardViewType cardType, View layout) {

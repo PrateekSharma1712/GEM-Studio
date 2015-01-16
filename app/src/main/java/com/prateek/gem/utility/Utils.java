@@ -1,6 +1,7 @@
 package com.prateek.gem.utility;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
@@ -9,6 +10,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
@@ -26,6 +28,7 @@ import android.widget.EditText;
 import com.prateek.gem.AppConstants;
 import com.prateek.gem.R;
 import com.prateek.gem.logger.DebugLogger;
+import com.prateek.gem.participants.AddMembersActivity;
 import com.prateek.gem.widgets.MyToast;
 
 import java.io.DataOutputStream;
@@ -39,10 +42,86 @@ import java.net.URL;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import static com.prateek.gem.utility.Utils.ColorFilter.*;
+
 /**
  * Created by prateek on 18/11/14.
  */
 public class Utils {
+
+    public enum ColorFilter{
+        PRIMARY, PRIMARYDARK, ACCENT, ACCENTLIGHT
+    }
+
+    /**
+     * Enables strict mode. This should only be called when debugging the application and is useful
+     * for finding some potential bugs or best practice violations.
+     */
+    @TargetApi(11)
+    public static void enableStrictMode() {
+        // Strict mode is only available on gingerbread or later
+        if (Utils.hasGingerbread()) {
+
+            // Enable all thread strict mode policies
+            StrictMode.ThreadPolicy.Builder threadPolicyBuilder =
+                    new StrictMode.ThreadPolicy.Builder()
+                            .detectAll()
+                            .penaltyLog();
+
+            // Enable all VM strict mode policies
+            StrictMode.VmPolicy.Builder vmPolicyBuilder =
+                    new StrictMode.VmPolicy.Builder()
+                            .detectAll()
+                            .penaltyLog();
+
+            // Honeycomb introduced some additional strict mode features
+            if (Utils.hasHoneycomb()) {
+                // Flash screen when thread policy is violated
+                threadPolicyBuilder.penaltyFlashScreen();
+                // For each activity class, set an instance limit of 1. Any more instances and
+                // there could be a memory leak.
+                vmPolicyBuilder
+                        .setClassInstanceLimit(AddMembersActivity.class, 1)
+                        .setClassInstanceLimit(AddMembersActivity.class, 1);
+            }
+
+            // Use builders to enable strict mode policies
+            StrictMode.setThreadPolicy(threadPolicyBuilder.build());
+            StrictMode.setVmPolicy(vmPolicyBuilder.build());
+        }
+    }
+
+    /**
+     * Uses static final constants to detect if the device's platform version is Gingerbread or
+     * later.
+     */
+    public static boolean hasGingerbread() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
+    }
+
+    /**
+     * Uses static final constants to detect if the device's platform version is Honeycomb or
+     * later.
+     */
+    public static boolean hasHoneycomb() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
+    }
+
+    /**
+     * Uses static final constants to detect if the device's platform version is Honeycomb MR1 or
+     * later.
+     */
+    public static boolean hasHoneycombMR1() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1;
+    }
+
+    /**
+     * Uses static final constants to detect if the device's platform version is ICS or
+     * later.
+     */
+    public static boolean hasICS() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+    }
 
     public static boolean isSDPresent() {
         Boolean status = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
@@ -54,7 +133,6 @@ public class Utils {
      */
     public static long getCurrentTimeInMilliSecs()
     {
-        //I Luv India :)
         return Calendar.getInstance(TimeZone.getTimeZone("GMT+5:30")).getTimeInMillis();
     }
 
@@ -125,7 +203,6 @@ public class Utils {
      * Check if there is any connectivity to a Wifi network
      *
      * @param context
-     * @param type
      * @return
      */
     public static boolean isConnectedWifi(Context context) {
@@ -371,6 +448,26 @@ public class Utils {
     public static boolean isGooglePhotosUri(Uri uri) {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
+
+    public static int getColorFilter(ColorFilter filter) {
+        switch (filter) {
+            case PRIMARY:
+                return AppDataManager.appContext.getResources().getColor(R.color.theme_default_primary);
+
+            case PRIMARYDARK:
+                return AppDataManager.appContext.getResources().getColor(R.color.theme_default_primary_dark);
+
+            case ACCENT:
+                return AppDataManager.appContext.getResources().getColor(R.color.theme_default_accent);
+
+            case ACCENTLIGHT:
+                return AppDataManager.appContext.getResources().getColor(R.color.theme_default_accent_light);
+        }
+
+        return AppDataManager.appContext.getResources().getColor(R.color.theme_default_primary);
+    }
+
+
 
     public static int uploadFile(String filepath) {
         int serverResponseCode = 0;

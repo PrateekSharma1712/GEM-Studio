@@ -85,4 +85,19 @@
         <item name="android:padding">10dp</item>
     </style>
 
+    <style name="contactsListStyle">
+        <item name="android:verticalScrollbarPosition">right</item>
+        <item name="android:fastScrollAlwaysVisible">true</item>
+        <item name="android:scrollbarStyle">outsideInset</item>
+    </style>
+
+    <style name="searchTextHighlight">
+        <item name="android:textColor">@color/theme_default_primary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="listViewActivatedStyle">
+        <item name="android:background">?android:attr/activatedBackgroundIndicator</item>
+    </style>
+
 </resources>

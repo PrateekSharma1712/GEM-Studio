@@ -24,6 +24,7 @@
     <dimen name="list_item_left_right_margin">16dp</dimen>
     <dimen name="group_avatar">44dp</dimen>
     <dimen name="item_row_height">72dp</dimen>
+    <dimen name="item_row_height_small">48dp</dimen>
 
     <dimen name="titleSize">16sp</dimen>
     <dimen name="subTitleSize">14sp</dimen>
