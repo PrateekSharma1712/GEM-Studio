@@ -13,9 +13,10 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_below="@+id/vToolbar"
-            android:paddingBottom="@dimen/activity_horizontal_margin">
+            android:paddingBottom="@dimen/activity_horizontal_margin"
+            android:fillViewport="false">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -50,6 +51,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/vGroupName"
+                    android:layout_marginTop="15dp"
                     android:background="?android:attr/selectableItemBackground"
                     card_view:cardBackgroundColor="@color/theme_default_icons"
                     card_view:cardCornerRadius="@dimen/group_card_radius"
@@ -107,6 +109,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/vMembersBrief"
                     android:layout_marginTop="10dp"
+                    android:layout_marginBottom="15dp"
                     android:background="?android:attr/selectableItemBackground"
                     card_view:cardBackgroundColor="@color/theme_default_icons"
                     card_view:cardCornerRadius="@dimen/group_card_radius"

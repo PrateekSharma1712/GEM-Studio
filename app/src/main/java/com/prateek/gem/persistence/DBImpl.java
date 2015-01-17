@@ -141,4 +141,27 @@ public class DBImpl extends DB {
         }
         return members;
     }
+
+    public static Member updateMemberServerId(long memberIdAdded, int memberIdServerAdded) {
+        ContentValues cv= new ContentValues();
+        Member member = new Member();
+        cv.put(TMembers.MEMBER_ID_SERVER, memberIdServerAdded);
+        getDatabase().update(TMembers.TMEMBERS, cv, TMembers.MEMBER_ID+ " = " + memberIdAdded, null);
+        Cursor c = getDatabase().query(TMembers.TMEMBERS, new String[]{
+                TMembers.GROUP_ID_FK,
+                TMembers.MEMBER_ID,
+                TMembers.MEMBER_ID_SERVER,
+                TMembers.NAME,
+                TMembers.PHONE_NUMBER}, TMembers.MEMBER_ID +" = "+memberIdAdded, null, null, null, null);
+        if(c.moveToFirst()){
+            do{
+                member.setGroupIdFk(c.getInt(0));
+                member.setMemberId(c.getInt(1));
+                member.setMemberIdServer(c.getInt(2));
+                member.setMemberName(c.getString(3));
+                member.setPhoneNumber(c.getString(4));
+            }while(c.moveToNext());
+        }
+        return member;
+    }
 }

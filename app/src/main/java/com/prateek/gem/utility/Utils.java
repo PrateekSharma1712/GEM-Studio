@@ -467,7 +467,26 @@ public class Utils {
         return AppDataManager.appContext.getResources().getColor(R.color.theme_default_primary);
     }
 
+    /*
+         * Convert wrong phone number formats to correct format 98 87 234323 - 9887234323 and add +91 everywhere     *
+         *
+         * @param String phone number
+         * @return String
+         *
+         */
+    public static String correctNumber(String phoneNumber){
+        String result = phoneNumber;
+        result = phoneNumber.replaceAll(" ", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\-", "");
 
+        if(!result.subSequence(0, 3).equals("+91")){
+            if(result.charAt(0) == '0'){
+                result = result.substring(1, result.length());
+            }
+            result = "+91"+result;
+        }
+        return result;
+
+    }
 
     public static int uploadFile(String filepath) {
         int serverResponseCode = 0;

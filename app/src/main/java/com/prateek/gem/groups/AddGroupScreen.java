@@ -494,11 +494,11 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
         View view = LayoutInflater.from(this).inflate(R.layout.member_mini_row, null, false);
         TextView memberName = (TextView) view.findViewById(R.id.memberName);
         TextView memberPhoneNumber = (TextView) view.findViewById(R.id.memberPhoneNumber);
-        for(Member member : members) {
-            memberName.setText(member.getMemberName());
-            memberPhoneNumber.setText(member.getPhoneNumber());
-            layout.addView(view);
-        }
+
+        memberName.setText(members.get(0).getMemberName());
+        memberPhoneNumber.setText(members.get(0).getPhoneNumber());
+        layout.addView(view);
+
         if(members.size() > 0) {
             addMoreView(getString(R.string.viewall), getString(R.string.more), CardViewType.MEMBER, layout);
         } else {

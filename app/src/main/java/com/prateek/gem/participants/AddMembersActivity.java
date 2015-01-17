@@ -3,6 +3,7 @@ package com.prateek.gem.participants;
 import android.annotation.SuppressLint;
 import android.app.LoaderManager;
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -16,13 +17,16 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.provider.ContactsContract.Data;
 
+import com.prateek.gem.AppConstants;
 import com.prateek.gem.BaseActivity;
 import com.prateek.gem.MainActivity;
 import com.prateek.gem.R;
 import com.prateek.gem.logger.DebugLogger;
 import com.prateek.gem.model.Member;
 import com.prateek.gem.persistence.DBImpl;
+import com.prateek.gem.service.FullFlowService;
 import com.prateek.gem.utility.AppDataManager;
+import com.prateek.gem.utility.LoadingScreen;
 import com.prateek.gem.utility.Utils;
 
 import java.util.ArrayList;
@@ -42,7 +46,7 @@ public class AddMembersActivity extends MainActivity implements
     private boolean isSearchResultView = false;
     private AddMembersAdapter mExistingMembersAdapter = null;
     private BaseActivity currentScreen = null;
-    private static ArrayList<Member> mExistingMembers = new ArrayList<Member>();
+    public static ArrayList<Member> mExistingMembers = new ArrayList<Member>();
 
     @Override
     protected int getLayoutResource() {
@@ -69,7 +73,6 @@ public class AddMembersActivity extends MainActivity implements
 
         mExistingMembersAdapter = new AddMembersAdapter(currentScreen);
         mExistingMembers.addAll(DBImpl.getMembers(AppDataManager.getCurrentGroup().getGroupIdServer()));
-        mExistingMembersAdapter.setExistingMembers(mExistingMembers);
         mExistingMembersRecyclerView.setAdapter(mExistingMembersAdapter);
 
         if (Intent.ACTION_SEARCH.equals(getIntent().getAction())) {
@@ -139,10 +142,11 @@ public class AddMembersActivity extends MainActivity implements
         switch (loader.getId()) {
             case ContactDetailQuery.QUERY_ID:
                 // Moves to the first row in the Cursor
+                DebugLogger.message("data"+data.moveToFirst());
                 if (data.moveToFirst()) {
                     DebugLogger.message("contact "+data.getString(ContactDetailQuery.NUMBER));
                     DebugLogger.message("contact "+data.getString(ContactDetailQuery.NAME));
-                    String number = data.getString(ContactDetailQuery.NUMBER);
+                    String number = Utils.correctNumber(data.getString(ContactDetailQuery.NUMBER));
                     String name = data.getString(ContactDetailQuery.NAME);
 
                     if(number == null) {
@@ -157,9 +161,10 @@ public class AddMembersActivity extends MainActivity implements
                         } else {
                             mExistingMembers.add(member);
                         }
-                        mExistingMembersAdapter.setExistingMembers(mExistingMembers);
                         mExistingMembersAdapter.notifyDataSetChanged();
                     }
+                } else {
+                    Utils.showToast(baseActivity,"No number");
                 }
 
                 break;
@@ -202,13 +207,28 @@ public class AddMembersActivity extends MainActivity implements
         final static int LOOKUPKEY = 2;
         final static int NAME = 3;
         final static int NUMBER = 4;
-
-
     }
 
     @Override
     public void onSelectionCleared() {
 
+    }
+
+    @Override
+    public void onSaveSelectedMembers() {
+        DebugLogger.message("mExistingMembers"+mExistingMembers);
+        DebugLogger.message("previous"+DBImpl.getMembers(AppDataManager.getCurrentGroup().getGroupIdServer()));
+        if(!mExistingMembers.equals(DBImpl.getMembers(AppDataManager.getCurrentGroup().getGroupIdServer()))) {
+            mExistingMembers.removeAll(DBImpl.getMembers(AppDataManager.getCurrentGroup().getGroupIdServer()));
+        }
+
+        if(Utils.isConnected(this)) {
+            LoadingScreen.showLoading(this, "Adding members");
+            FullFlowService.ServiceAddMembers(this, AppConstants.NOT_ADDMEMBERS, mExistingMembers, AppDataManager.getCurrentGroup().getGroupIdServer(), AppDataManager.getCurrentGroup().getGroupId());
+            DebugLogger.message(mExistingMembers);
+        } else {
+            Utils.showToast(this, "Adding Members requires net connection");
+        }
     }
 
     @Override
@@ -220,5 +240,30 @@ public class AddMembersActivity extends MainActivity implements
     protected void onDestroy() {
         super.onDestroy();
         mExistingMembers = new ArrayList<Member>();
+    }
+
+    public class AddMemberRecevier extends BroadcastReceiver {
+
+        public static final String ADDMEMBERSUCCESSRECEIVER = "com.prateek.gem.views.AddExpenseActivity.ADDMEMBERSUCCESSRECEIVER";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            LoadingScreen.dismissProgressDialog();
+            int notId = intent.getIntExtra(FullFlowService.EXTRA_NOTID, 0);
+            boolean result = intent.getBooleanExtra(AppConstants.RESULT, false);
+            switch (notId) {
+                case AppConstants.NOT_ADDMEMBERS:
+                    if(result){
+                        Utils.showToast(context, "Added Succesfully");
+                        finish();
+                    }else{
+                        Utils.showToast(context, "Cannot add members, Please try after some time");
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
     }
 }

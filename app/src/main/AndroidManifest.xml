@@ -80,6 +80,9 @@
 
         <!-- services -->
         <service android:name=".service.FirstTimeLoadService"></service>
+        <service
+            android:name=".service.FullFlowService" >
+        </service>
         <service android:name=".GcmIntentService" />
 
     </application>
