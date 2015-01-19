@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -47,6 +48,8 @@ public class AddMembersActivity extends MainActivity implements
     private AddMembersAdapter mExistingMembersAdapter = null;
     private BaseActivity currentScreen = null;
     public static ArrayList<Member> mExistingMembers = new ArrayList<Member>();
+    private AddMemberRecevier addMemberReceiver;
+    IntentFilter addMemberIntentFilter;
 
     @Override
     protected int getLayoutResource() {
@@ -75,6 +78,10 @@ public class AddMembersActivity extends MainActivity implements
         mExistingMembers.addAll(DBImpl.getMembers(AppDataManager.getCurrentGroup().getGroupIdServer()));
         mExistingMembersRecyclerView.setAdapter(mExistingMembersAdapter);
 
+        addMemberReceiver = new AddMemberRecevier();
+        addMemberIntentFilter = new IntentFilter(AddMemberRecevier.ADDMEMBERSUCCESSRECEIVER);
+        addMemberIntentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+
         if (Intent.ACTION_SEARCH.equals(getIntent().getAction())) {
 
             // Fetch query from intent and notify the fragment that it should display search
@@ -94,6 +101,18 @@ public class AddMembersActivity extends MainActivity implements
             setTitle(title);
         }
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        registerReceiver(addMemberReceiver, addMemberIntentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        registerReceiver(addMemberReceiver, addMemberIntentFilter);
     }
 
     @Override
