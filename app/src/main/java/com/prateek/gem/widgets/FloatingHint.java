@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.widget.EditText;
 
 import com.prateek.gem.logger.DebugLogger;
+import com.prateek.gem.utility.AppDataManager;
 
 /**
  * Created by prateek on 5/1/15.
@@ -38,6 +39,7 @@ public class FloatingHint extends EditText {
 
         mWasEmpty = TextUtils.isEmpty(getText());
         mHintColors = getHintTextColors();
+
     }
 
     @Override
@@ -67,7 +69,7 @@ public class FloatingHint extends EditText {
 
         if (isEmpty) {
             mAnimation = Animation.GROW;
-            setHintTextColor(Color.TRANSPARENT);
+            setHintTextColor(AppDataManager.getThemeSecondaryTextColor());
         } else {
             mAnimation = Animation.SHRINK;
         }
@@ -89,8 +91,7 @@ public class FloatingHint extends EditText {
         }
 
         mFloatingHintPaint.set(getPaint());
-        /*mFloatingHintPaint.setColor(
-                mHintColors.getColorForState(getDrawableState(), mHintColors.getDefaultColor()));*/
+        mFloatingHintPaint.setColor(AppDataManager.getThemeSecondaryTextColor());
 
         final float hintPosX = getCompoundPaddingLeft() + getScrollX();
         final float normalHintPosY = getBaseline();
@@ -117,7 +118,7 @@ public class FloatingHint extends EditText {
 
         if (mAnimationFrame == mAnimationSteps) {
             if (mAnimation == Animation.GROW) {
-                setHintTextColor(mHintColors);
+                setHintTextColor(AppDataManager.getThemeSecondaryTextColor());
             }
             mAnimation = Animation.NONE;
             mAnimationFrame = 0;

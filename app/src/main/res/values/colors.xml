@@ -8,7 +8,7 @@
     <color name="theme_default_accent">#536DFE</color>
     <color name="theme_default_accent_light">#FF9DB6FE</color>
     <color name="theme_default_text_primary">#212121</color>
-    <color name="theme_default_text_secondary">#727272</color>
+    <color name="theme_default_text_secondary">#ff868686</color>
     <color name="theme_default_icons">#FFFFFF</color>
     <color name="dividerColor">#B6B6B6</color>
 

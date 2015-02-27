@@ -47,14 +47,15 @@
         <activity
             android:name=".expenses.AddExpenseActivity"
             android:label="@string/title_activity_add_expense"
-            android:parentActivityName=".expenses.ExpensesActivity">
+            android:parentActivityName=".expenses.ExpensesActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.prateek.gem.groups.AddGroupScreen" />
         </activity>
         <activity
             android:name=".expenses.ExpensesActivity"
-            android:label="@string/title_activity_expenses_actcity"
+            android:label="@string/title_activity_expenses_activity"
             android:parentActivityName=".groups.AddGroupScreen">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -76,6 +77,19 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.prateek.gem.groups.AddGroupScreen" />
+        </activity>
+
+        <activity
+            android:name=".items.ItemsActivity"
+            android:parentActivityName=".groups.AddGroupScreen">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.prateek.gem.groups.AddGroupScreen" />
+        </activity>
+
+        <activity
+            android:name=".items.SelectingItemsActivity">
+
         </activity>
 
         <!-- services -->

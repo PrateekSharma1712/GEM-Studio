@@ -8,6 +8,8 @@ import com.prateek.gem.AppConstants;
 import com.prateek.gem.AppSharedPreference;
 import com.prateek.gem.model.Group;
 import com.prateek.gem.logger.DebugLogger;
+import com.prateek.gem.model.Item;
+import com.prateek.gem.model.Items;
 import com.prateek.gem.model.Member;
 import com.prateek.gem.utility.Utils;
 
@@ -142,17 +144,23 @@ public class DBImpl extends DB {
         return members;
     }
 
+    public static ArrayList<String> getMemberName(int groupId) {
+        Cursor cursor = getDatabase().query(TMembers.TMEMBERS, new String[]{TMembers.NAME}, TMembers.GROUP_ID_FK + " = " + groupId, null, null, null, null);
+        ArrayList<String> members = new ArrayList<>();
+        if(cursor.moveToFirst()) {
+            do {
+                members.add(cursor.getString(cursor.getColumnIndex(TMembers.NAME)));
+            } while(cursor.moveToNext());
+        }
+        return members;
+    }
+
     public static Member updateMemberServerId(long memberIdAdded, int memberIdServerAdded) {
         ContentValues cv= new ContentValues();
         Member member = new Member();
         cv.put(TMembers.MEMBER_ID_SERVER, memberIdServerAdded);
         getDatabase().update(TMembers.TMEMBERS, cv, TMembers.MEMBER_ID+ " = " + memberIdAdded, null);
-        Cursor c = getDatabase().query(TMembers.TMEMBERS, new String[]{
-                TMembers.GROUP_ID_FK,
-                TMembers.MEMBER_ID,
-                TMembers.MEMBER_ID_SERVER,
-                TMembers.NAME,
-                TMembers.PHONE_NUMBER}, TMembers.MEMBER_ID +" = "+memberIdAdded, null, null, null, null);
+        Cursor c = getDatabase().query(TMembers.TMEMBERS, memberFields, TMembers.MEMBER_ID +" = "+memberIdAdded, null, null, null, null);
         if(c.moveToFirst()){
             do{
                 member.setGroupIdFk(c.getInt(0));
@@ -163,5 +171,58 @@ public class DBImpl extends DB {
             }while(c.moveToNext());
         }
         return member;
+    }
+
+    public static ArrayList<Items> getItems(String groupId) {
+        Cursor cursor = getDatabase().query(TItems.TITEMS, itemFields, TItems.GROUP_FK + " = " + groupId, null, null, null, TItems.ITEM_NAME);
+        return resolveCursorForItems(cursor);
+    }
+
+    public static ArrayList<Items> getItems(Integer groupId, String category) {
+        Cursor cursor = getDatabase().query(TItems.TITEMS, itemFields, TItems.GROUP_FK + " = " + groupId + " AND " + TItems.CATEGORY + " = '" + category + "'", null, null, null, null);
+        return resolveCursorForItems(cursor);
+    }
+
+    public static Items getItem(int itemIdServer) {
+        Cursor cursor = getDatabase().query(TItems.TITEMS, itemFields, TItems.ITEM_ID_SERVER + " = " + itemIdServer, null, null, null, null);
+        Items item = null;
+        if(cursor.moveToFirst()) {
+            do {
+                item = fillInItem(cursor);
+            } while(cursor.moveToNext());
+        }
+        return item;
+    }
+
+    public static int removeItem(int itemIdServer,int groupId){
+        int rowAffected = getDatabase().delete(TItems.TITEMS, TItems.ITEM_ID_SERVER+" = "+ itemIdServer +" AND "+TItems.GROUP_FK + " = " + groupId, null);
+        return rowAffected;
+    }
+
+    private static ArrayList<Items> resolveCursorForItems(Cursor cursor) {
+        ArrayList<Items> items = new ArrayList<>();
+        if(cursor.moveToFirst()) {
+            do {
+                items.add(fillInItem(cursor));
+            } while(cursor.moveToNext());
+        }
+        return items;
+    }
+
+    private static Items fillInItem(Cursor cursor) {
+        Items item = new Items();
+        item.setCategory(cursor.getString(cursor.getColumnIndex(TItems.CATEGORY)));
+        item.setGroupFK(cursor.getInt(cursor.getColumnIndex(TItems.GROUP_FK)));
+        item.setId(cursor.getInt(cursor.getColumnIndex(TItems.ITEM_ID)));
+        item.setIdServer(cursor.getInt(cursor.getColumnIndex(TItems.ITEM_ID_SERVER)));
+        item.setItemName(cursor.getString(cursor.getColumnIndex(TItems.ITEM_NAME)));
+        return item;
+    }
+
+    public static int updateItemServerId(long itemId,int itemserverId){
+        ContentValues cv= new ContentValues();
+        cv.put(TItems.ITEM_ID_SERVER, itemserverId);
+        return getDatabase().update(TItems.TITEMS, cv, TItems.ITEM_ID + " = " + itemId, null);
+
     }
 }

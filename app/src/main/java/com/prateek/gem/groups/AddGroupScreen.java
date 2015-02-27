@@ -29,6 +29,7 @@ import com.prateek.gem.R;
 import com.prateek.gem.expenses.AddExpenseActivity;
 import com.prateek.gem.expenses.ExpensesActivity;
 import com.prateek.gem.helper.AppDialog;
+import com.prateek.gem.items.ItemsActivity;
 import com.prateek.gem.logger.DebugLogger;
 import com.prateek.gem.model.Group;
 import com.prateek.gem.model.Member;
@@ -51,6 +52,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -126,9 +128,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
             vExpenseCardView.setVisibility(View.GONE);
             vMemberCardView.setVisibility(View.GONE);
             vItemCardView.setVisibility(View.GONE);
-            vGroupName.clearFocus();
         } else {
-            Utils.hideKeyboard(vGroupName);
             updateExpenseView();
             updateMemberView();
             updateItemView();
@@ -140,7 +140,14 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
             @Override
             public void onClick(View v) {
                 recordedTime = Utils.getCurrentTimeInMilliSecs();
-                AppDialog.init(AppDataManager.currentScreen, getString(R.string.takephoto), null, imageCaptureOptions);
+                //AppDialog.init(AppDataManager.currentScreen, getString(R.string.takephoto), null, imageCaptureOptions);
+                ConfirmationDialog mcd = new ConfirmationDialog();
+                Bundle bundle = new Bundle();
+                bundle.putString(ConfirmationDialog.TITLE, getString(R.string.takephoto));
+                bundle.putInt(AppConstants.ConfirmConstants.CONFIRM_KEY, AppConstants.ConfirmConstants.IMAGE_CAPTURE);
+                bundle.putStringArrayList(ConfirmationDialog.LIST, new ArrayList<String>(Arrays.asList(imageCaptureOptions)));
+                mcd.setArguments(bundle);
+                mcd.show(getSupportFragmentManager(), "ComfirmationDialog");
             }
         });
 
@@ -158,7 +165,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
     @Override
     protected void onResume() {
         super.onResume();
-        DebugLogger.message("toolbar"+mToolBar);
+        DebugLogger.message("toolbar" + mToolBar);
         if(isNew) {
             setToolbar(R.string.title_activity_add_group_screen, R.drawable.ic_group_add);
         } else {
@@ -221,7 +228,10 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
                 bundle.putInt(AppConstants.ConfirmConstants.CONFIRM_KEY, AppConstants.ConfirmConstants.FROM_ADD_GROUP);
                 bundle.putString(ConfirmationDialog.BUTTON1, getString(R.string.button_cancel));
                 bundle.putString(ConfirmationDialog.BUTTON2, getString(R.string.button_add));
-                bundle.putString(ConfirmationDialog.MESSAGE, "Are you sure to add "+Utils.stringify(vGroupName.getText())+"?");
+                if(isNew)
+                    bundle.putString(ConfirmationDialog.MESSAGE, "Are you sure to add "+Utils.stringify(vGroupName.getText())+"?");
+                else
+                    bundle.putString(ConfirmationDialog.MESSAGE, "Are you sure to edit "+Utils.stringify(vGroupName.getText())+"?");
                 mcd.setArguments(bundle);
                 mcd.show(getSupportFragmentManager(), "ComfirmationDialog");
             }else{
@@ -229,7 +239,7 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
             }
         }
         else{
-            Utils.showError(vGroupName,this);
+            Utils.showError(vGroupName, this);
         }
     }
 
@@ -523,8 +533,11 @@ public class AddGroupScreen extends MainActivity implements DialogClickListener{
                     mMemberScreenIntent = new Intent(AddGroupScreen.this, MembersActivity.class);
                     startActivity(mMemberScreenIntent);
                 } else if(cardType == CardViewType.EXPENSE) {
-                    mExenseScreenIntent = new Intent(AddGroupScreen.this, ExpensesActivity.class);
+                    mExenseScreenIntent = new Intent(AddGroupScreen.this, AddExpenseActivity.class);
                     startActivity(mExenseScreenIntent);
+                } else if(cardType == CardViewType.ITEM) {
+                    mItemScreenIntent = new Intent(AddGroupScreen.this, ItemsActivity.class);
+                    startActivity(mItemScreenIntent);
                 }
             }
         });

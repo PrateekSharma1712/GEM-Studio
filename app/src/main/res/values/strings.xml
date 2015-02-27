@@ -59,12 +59,15 @@
     <string name="by">Expense by: </string>
     <string name="participants">Participants: </string>
     <string name="item">Item: </string>
+    <string name="select_item">Select item</string>
+    <string name="selected_item">Selected items</string>
+    <string name="tap_to_view_select_item">Tap to view selected items</string>
     <string name="psdate">Please select a date</string>
     <string name="psitem">Please enter a item</string>
     <string name="psamountempty">Amount cannot be empty</string>
     <string name="psamountvalid">Please enter valid amount</string>
     <string name="label_amount">Amount</string>
-    <string name="label_date">Date</string>
+    <string name="label_date">Expense date</string>
     <string name="label_particiapnts">Tap to choose participants</string>
     <string name="inr">Rs. </string>
     <string name="amount">Amount</string>
@@ -156,9 +159,11 @@
     <string name="title_activity_main_landing_screen">Groups</string>
     <string name="title_activity_add_group_screen">Add Group</string>
     <string name="takephoto">Take Photo</string>
-    <string name="title_activity_expenses_actcity">Expenses</string>
+    <string name="title_activity_expenses_activity">Expenses</string>
     <string name="title_activity_members_activity">Members</string>
     <string name="title_activity_add_members_activity">Add Members</string>
+    <string name="title_activity_items_activity">Item</string>
+    <string name="title_activity_add_items_activity">Add Item</string>
 
     <string name="more">Add More</string>
     <string name="viewall">View all</string>
@@ -170,5 +175,24 @@
     <string name="alphabet">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
 
     <string name="already_exists">\"%s\" already exists</string>
+    <string name="no">No %s</string>
+
+    <string-array name="categoryarray" tools:ignore="MissingTranslation">
+        <item name="food">Food</item>
+        <item name="rashan">Rashan</item>
+        <item name="houseneeds">House needs</item>
+        <item name="milk">Milk</item>
+        <item name="bills">Bills</item>
+        <item name="vegetables">Vegetables</item>
+        <item name="fruits">Fruits</item>
+        <item name="water">Water</item>
+        <item name="gas">Gas</item>
+        <item name="party">Party</item>
+        <item name="electrical">Electrical</item>
+        <item name="medical">Medical</item>
+        <item name="transport">Transport</item>
+        <item name="entertainment">Entertainment</item>
+        <item name="other">Other</item>
+    </string-array>
 
 </resources>

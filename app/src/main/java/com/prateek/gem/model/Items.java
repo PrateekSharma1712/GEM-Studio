@@ -9,6 +9,7 @@ public class Items implements Comparable<Items>{
 	private String itemName;
 	private int groupFK;
 	private String category;
+    private boolean isSelected;
 
 	
 
@@ -115,5 +116,29 @@ public class Items implements Comparable<Items>{
 		
 		return "";
 	}
-	
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Items items = (Items) o;
+
+        if (!itemName.equals(items.itemName)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return itemName.hashCode();
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean isSelected) {
+        this.isSelected = isSelected;
+    }
 }

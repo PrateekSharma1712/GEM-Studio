@@ -15,7 +15,6 @@ import com.prateek.gem.widgets.AddFloatingActionButton;
 public class ExpensesActivity extends MainActivity {
 
     private RecyclerView vExpensesList = null;
-    private GroupsAdapter mExpensesAdapter = null;
 
     private RecyclerView.LayoutManager mLayoutManager;
     private AddFloatingActionButton vAddExpensesButton;
@@ -54,7 +53,7 @@ public class ExpensesActivity extends MainActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        setToolbar(AppDataManager.getCurrentGroup().getGroupName()+"-Expenses", R.drawable.ic_group);
+        setToolbar("Expenses", R.drawable.ic_group);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

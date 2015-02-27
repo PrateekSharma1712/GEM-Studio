@@ -27,10 +27,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusableInTouchMode="false"
+                    android:hint="@string/label_date"
                     android:inputType="date" />
 
                 <Spinner
                     android:id="@+id/vExpenseBy"
+                    style="@style/editTextStyle"
                     android:layout_below="@+id/vExpenseDate"
                     android:layout_marginTop="@dimen/field_margin_gap"
                     android:layout_width="match_parent"
@@ -42,6 +44,7 @@
                     android:layout_marginTop="@dimen/field_margin_gap"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="@string/select_item"
                     android:focusableInTouchMode="false" />
 
                 <com.prateek.gem.widgets.FloatingHint
@@ -49,6 +52,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/field_margin_gap"
+                    android:hint="@string/amount"
                     android:layout_below="@+id/vExpenseItem" />
 
                 <Button

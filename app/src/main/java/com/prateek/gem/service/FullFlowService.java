@@ -25,8 +25,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.prateek.gem.App;
 import com.prateek.gem.AppConstants;
 import com.prateek.gem.AppConstants.ServiceIDs;
+import com.prateek.gem.items.ItemsActivity;
 import com.prateek.gem.logger.DebugLogger;
 import com.prateek.gem.model.Member;
 import com.prateek.gem.participants.AddMembersActivity;
@@ -55,23 +57,22 @@ public class FullFlowService extends IntentService {
 	
 	public static final String EXTRA_NOTID = "com.prateek.gem.extra.NOTID";
 	
-	/*public static void ServiceAddItem(Context context, int notAdditem,List<NameValuePair> listArrived,ContentValues cv) {
+	public static void ServiceAddItem(Context context, int notAdditem,List<NameValuePair> listArrived,ContentValues cv) {
 		itemIntent = new Intent();
-		itemIntent.setAction(ItemsReceiver.ITEMSUCCESSRECEIVER);
+		itemIntent.setAction(ItemsActivity.ItemsReceiver.ITEMSUCCESSRECEIVER);
 		itemIntent.addCategory(Intent.CATEGORY_DEFAULT);
 		
 		Intent intent = new Intent(context, FullFlowService.class);
 		intent.putExtra(EXTRA_NOTID, notAdditem);
 		addItemCv = cv;
-		//intent.putExtra(TItems.ITEM_ID, cv);
 		addItemList = listArrived;
-		//long currentRowId = db.insert(TItems.TITEMS, cv);
 		context.startService(intent);
 	}
 	
 	public static void ServiceDeleteItem(Context context, int notDeleteitem,List<NameValuePair> listArrived) {
+        DebugLogger.message("started");
 		itemIntent = new Intent();
-		itemIntent.setAction(ItemsReceiver.ITEMSUCCESSRECEIVER);
+		itemIntent.setAction(ItemsActivity.ItemsReceiver.ITEMSUCCESSRECEIVER);
 		itemIntent.addCategory(Intent.CATEGORY_DEFAULT);
 		
 		Intent intent = new Intent(context, FullFlowService.class);
@@ -80,7 +81,7 @@ public class FullFlowService extends IntentService {
 		context.startService(intent);
 	}
 	
-	public static void ServiceAddExpense(Context context, int notAddExpense,List<NameValuePair> listArrived, ContentValues cv) {
+	/*public static void ServiceAddExpense(Context context, int notAddExpense,List<NameValuePair> listArrived, ContentValues cv) {
 		expenseIntent = new Intent();
 		expenseIntent.setAction(AddExpenseRecevier.ADDEXPENSESUCCESSRECEIVER);
 		expenseIntent.addCategory(Intent.CATEGORY_DEFAULT);
@@ -153,22 +154,23 @@ public class FullFlowService extends IntentService {
 			final int notId = intent.getIntExtra(EXTRA_NOTID, 0);
             DebugLogger.message(notId);
 			switch (notId) {
-			/*case AppConstants.NOT_ADDITEM:
+			case AppConstants.NOT_ADDITEM:
 				System.out.println("NOT_ADDITEM");
 				handleAddItem(addItemList);
 				itemIntent.putExtra(EXTRA_NOTID, notId);
 				System.out.println("RUN");
 				sendBroadcast(itemIntent);
 				break;
+
 			case AppConstants.NOT_DELETEITEM:				
-				int groupId = intent.getIntExtra(TItems.GROUP_FK, 0);
+				int groupId = intent.getIntExtra(DB.TItems.GROUP_FK, 0);
 				System.out.println("NOT_DELETEITEM");
 				handleDeleteItem(deleteItemList);
 				itemIntent.putExtra(EXTRA_NOTID, notId);				
 				System.out.println("RUN");
 				sendBroadcast(itemIntent);				
 				break;
-			case AppConstants.NOT_ADDEXPENSE:
+			/*case AppConstants.NOT_ADDEXPENSE:
 				handleAddExpense(addExpenseList);
 				expenseIntent.putExtra(EXTRA_NOTID, notId);
 				System.out.println("RUN");
@@ -267,8 +269,7 @@ public class FullFlowService extends IntentService {
 	}
 
 
-	/*private void handleAddItem(List<NameValuePair> list) {
-		db = new DBAdapter(context);
+	private void handleAddItem(List<NameValuePair> list) {
 		System.out.println("items adding list "+list);
 		int itemIdServerReceived = 0;		
 		ServiceHandler handler = new ServiceHandler();
@@ -279,30 +280,20 @@ public class FullFlowService extends IntentService {
 				JSONObject jsonObject = new JSONObject(response);
 				if(!jsonObject.getBoolean("error")){
 					String itemName = list.get(0).getValue();
-					System.out.println("Item name"+itemName);
-					itemIntent.putExtra(TItems.ITEM_NAME, itemName);
+					System.out.println("Item name" + itemName);
+					itemIntent.putExtra(DB.TItems.ITEM_NAME, itemName);
 					itemIntent.putExtra(AppConstants.RESULT, true);
-					db.open();
-					long currentRow = db.insert(TItems.TITEMS, addItemCv);
-					db.close();
+                    long currentRow = DBImpl.insert(DB.TItems.TITEMS, addItemCv);
 					itemIdServerReceived = jsonObject.getInt("id");
-					db.open();
-					long rowsUpdated = db.updateItemServerId(currentRow, itemIdServerReceived);
-					System.out.println("Item rows updated"+rowsUpdated);
-					db.close();
-					db.open();
-					GEMApp.getInstance().getItems().add(db.getItemByServerId(itemIdServerReceived));
-					System.out.println("items"+db.getItems(GEMApp.getInstance().getCurr_group().getGroupIdServer()));
-					db.close();
+
+					long rowsUpdated = DBImpl.updateItemServerId(currentRow, itemIdServerReceived);
+					System.out.println("Item rows updated" + rowsUpdated);
 					
 					String secretCode = ITEMADDED+DELIMITER_BW+itemIdServerReceived;
-					
-					db.open();
-					String message = GEMApp.getInstance().getAdmin().getUserName() + " added " + itemName + " in " + GEMApp.getInstance().getCurr_group().getGroupName()+DELIMITER+secretCode;
-					System.out.println(GEMApp.getInstance().getCurr_group());
-					db.close();
+					String message = AppDataManager.getUser().getUserName() + " added " + itemName + " in " + AppDataManager.getCurrentGroup().getGroupName()+DELIMITER+secretCode;
+
 					List<NameValuePair> notificationList = new ArrayList<NameValuePair>();
-					String ids = getMembersGCMIds(GEMApp.getInstance().getCurr_group().getGroupIdServer());
+					String ids = getMembersGCMIds(AppDataManager.getCurrentGroup().getGroupIdServer());
 					System.out.println("gmc dsssss"+ids);
 					if(ids != null && ids.length() != 0){
 						//String s = "APA91bGZu4HHe9qSHKCAdEBvOmtJd1B3hd5PamlRbkecaO_JusQjvnoCs1csl0LF4RnYQ65iqv6QLJjVk-kRoo-tWu4vY9gUiuT9ZLeACcPuQedWxOdw-WDUDjCFX5fnuFbqvz710YEl,APA91bHzw3Dmw125yjZj8LtYPgFyNMohkBHi2kOsVt0DDA03mFR2vPc1AJpDfGjYcuwWhBB9lZTgY-qQIcKzWVWj26cGB0IEwHQQR1bfZh6m1bqKtNo_mqHgoSx7a7AQezwalLbrV_ZuWv-njGBR4NlxvZbSkVSAHA";
@@ -321,7 +312,6 @@ public class FullFlowService extends IntentService {
 	}
 	
 	private void handleDeleteItem(List<NameValuePair> list) {
-		db = new DBAdapter(context);
 		System.out.println("items deleting list "+list);		
 		ServiceHandler handler = new ServiceHandler();
 		String response = handler.makeServiceCall(AppConstants.URL_API, AppConstants.REQUEST_METHOD_POST,list);
@@ -330,27 +320,24 @@ public class FullFlowService extends IntentService {
 			try {
 				JSONObject jsonObject = new JSONObject(response);
 				if(!jsonObject.getBoolean("error")){
-					String itemName = list.get(0).getValue();
+                    int itemServerId = Integer.parseInt(list.get(0).getValue());
+                    String itemName = DBImpl.getItem(itemServerId).getItemName();
 					int groupId = Integer.parseInt(list.get(1).getValue());
-					System.out.println("Item Name"+itemName);
+					System.out.println("Item Server Id"+itemServerId);
 					System.out.println("Group Id"+groupId);
-					itemIntent.putExtra(TItems.ITEM_NAME, itemName);
+					itemIntent.putExtra(DB.TItems.ITEM_ID_SERVER, itemServerId);
 					itemIntent.putExtra(AppConstants.RESULT, true);
-					db.open();
-					int itemServerId = db.getItemServerId(itemName, groupId);
+
 					System.out.println("Item server id "+itemServerId);
-					db.close();
-					
+
 					String secretCode = ITEMDELETED+DELIMITER_BW+itemServerId;
-					
-					db.open();
-					int rowsUpdated = db.removeItem(itemName, groupId);
+
+					int rowsUpdated = DBImpl.removeItem(itemServerId, groupId);
 					System.out.println("Rows updated "+rowsUpdated);
-					String message = GEMApp.getInstance().getAdmin().getUserName() + " deleted " +itemName + " in " + GEMApp.getInstance().getCurr_group().getGroupName()+DELIMITER+secretCode;
-					System.out.println(GEMApp.getInstance().getCurr_group());
-					db.close();
+					String message = AppDataManager.getUser().getUserName() + " deleted " +itemName + " in " + AppDataManager.getCurrentGroup().getGroupName()+DELIMITER+secretCode;
+					System.out.println(AppDataManager.getCurrentGroup());
 					List<NameValuePair> notificationList = new ArrayList<NameValuePair>();
-					String ids = getMembersGCMIds(GEMApp.getInstance().getCurr_group().getGroupIdServer());
+					String ids = getMembersGCMIds(AppDataManager.getCurrentGroup().getGroupIdServer());
 					System.out.println("gmc dsssss"+ids);
 					if(ids != null && ids.length() != 0){
 						//String s = "APA91bGZu4HHe9qSHKCAdEBvOmtJd1B3hd5PamlRbkecaO_JusQjvnoCs1csl0LF4RnYQ65iqv6QLJjVk-kRoo-tWu4vY9gUiuT9ZLeACcPuQedWxOdw-WDUDjCFX5fnuFbqvz710YEl,APA91bHzw3Dmw125yjZj8LtYPgFyNMohkBHi2kOsVt0DDA03mFR2vPc1AJpDfGjYcuwWhBB9lZTgY-qQIcKzWVWj26cGB0IEwHQQR1bfZh6m1bqKtNo_mqHgoSx7a7AQezwalLbrV_ZuWv-njGBR4NlxvZbSkVSAHA";
@@ -368,7 +355,7 @@ public class FullFlowService extends IntentService {
 		}
 	}
 	
-	private void handleDeleteExpense(List<NameValuePair> list) {
+	/*private void handleDeleteExpense(List<NameValuePair> list) {
 		db = new DBAdapter(context);
 		System.out.println("expense deleting list "+list);		
 		ServiceHandler handler = new ServiceHandler();

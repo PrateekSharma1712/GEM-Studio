@@ -51,29 +51,31 @@ public abstract class MainActivity extends BaseActivity implements ConfirmationD
 
     @Override
     public void modeConfirmed() {
-        // Do nothing
+
     }
 
     @Override
     public void deleteMemberConfirmed(int memberId) {
-        // Do nothing
 
     }
 
     @Override
     public void deleteExpenseConfirmed(int expenseId) {
-        // Do nothing
 
     }
 
     @Override
-    public void deleteItemConfirmed(String deleteItemConfirmed) {
-        // Do nothing
+    public void deleteItemConfirmed(boolean deleteItemConfirmed) {
 
     }
 
     @Override
     public void openNewActivity(int requestCodeClickImage) {
-        // Do nothing
+
+    }
+
+    @Override
+    public void onItemsAdded(String category, String item) {
+
     }
 }

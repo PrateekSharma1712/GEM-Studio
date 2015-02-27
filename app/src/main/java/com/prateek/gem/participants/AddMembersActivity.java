@@ -59,7 +59,7 @@ public class AddMembersActivity extends MainActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        setToolbar(AppDataManager.getCurrentGroup().getGroupName()+"-Add Members", R.drawable.ic_group);
+        setToolbar("Add Members", R.drawable.ic_group);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -112,7 +112,7 @@ public class AddMembersActivity extends MainActivity implements
     @Override
     protected void onStop() {
         super.onStop();
-        registerReceiver(addMemberReceiver, addMemberIntentFilter);
+        unregisterReceiver(addMemberReceiver);
     }
 
     @Override
@@ -238,15 +238,19 @@ public class AddMembersActivity extends MainActivity implements
         DebugLogger.message("mExistingMembers"+mExistingMembers);
         DebugLogger.message("previous"+DBImpl.getMembers(AppDataManager.getCurrentGroup().getGroupIdServer()));
         if(!mExistingMembers.equals(DBImpl.getMembers(AppDataManager.getCurrentGroup().getGroupIdServer()))) {
+            DebugLogger.message("need to add");
             mExistingMembers.removeAll(DBImpl.getMembers(AppDataManager.getCurrentGroup().getGroupIdServer()));
-        }
-
-        if(Utils.isConnected(this)) {
-            LoadingScreen.showLoading(this, "Adding members");
-            FullFlowService.ServiceAddMembers(this, AppConstants.NOT_ADDMEMBERS, mExistingMembers, AppDataManager.getCurrentGroup().getGroupIdServer(), AppDataManager.getCurrentGroup().getGroupId());
-            DebugLogger.message(mExistingMembers);
+            DebugLogger.message("mExistingMembers"+mExistingMembers);
+            if(Utils.isConnected(this)) {
+                LoadingScreen.showLoading(this, "Adding members");
+                FullFlowService.ServiceAddMembers(this, AppConstants.NOT_ADDMEMBERS, mExistingMembers, AppDataManager.getCurrentGroup().getGroupIdServer(), AppDataManager.getCurrentGroup().getGroupId());
+                DebugLogger.message(mExistingMembers);
+            } else {
+                Utils.showToast(this, "Adding Members requires internet connection");
+            }
         } else {
-            Utils.showToast(this, "Adding Members requires net connection");
+            DebugLogger.message("no need to add");
+            finish();
         }
     }
 
@@ -277,6 +281,7 @@ public class AddMembersActivity extends MainActivity implements
                         finish();
                     }else{
                         Utils.showToast(context, "Cannot add members, Please try after some time");
+                        mExistingMembers = DBImpl.getMembers(AppDataManager.getCurrentGroup().getGroupIdServer());
                     }
                     break;
 

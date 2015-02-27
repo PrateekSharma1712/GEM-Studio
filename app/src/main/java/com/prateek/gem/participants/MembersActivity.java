@@ -55,7 +55,7 @@ public class MembersActivity extends MainActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        setToolbar(AppDataManager.getCurrentGroup().getGroupName()+"-Members", R.drawable.ic_group);
+        setToolbar("Members", R.drawable.ic_group);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 }

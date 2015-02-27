@@ -39,7 +39,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import static com.prateek.gem.utility.Utils.ColorFilter.*;
@@ -624,5 +627,46 @@ public class Utils {
 
         inFromBottom.setInterpolator(new AccelerateInterpolator());
         return inFromBottom;
+    }
+
+    public static Animation outFromBottomAnimation(long duration) {
+
+        Animation inFromBottom = new TranslateAnimation(
+                Animation.RELATIVE_TO_PARENT, 0.0f,
+                Animation.RELATIVE_TO_PARENT, 0.0f,
+                Animation.RELATIVE_TO_PARENT, 0.0f,
+                Animation.RELATIVE_TO_PARENT, +1.0f);
+        inFromBottom.setDuration(duration);
+
+        inFromBottom.setInterpolator(new AccelerateInterpolator());
+        return inFromBottom;
+    }
+
+    public static void toggleVisibility(View view, boolean withAnimation) {
+        DebugLogger.message("view.getVisibility()"+view.getVisibility());
+        switch(view.getVisibility()) {
+            case View.GONE:
+                view.setVisibility(View.VISIBLE);
+                if(withAnimation)
+                    view.startAnimation(inFromBottomAnimation(1000));
+                break;
+            case View.VISIBLE:
+                view.setVisibility(View.GONE);
+                if(withAnimation)
+                    view.startAnimation(outFromBottomAnimation(1000));
+                break;
+        }
+    }
+
+    /*
+	 * usage: date formatting into 20 February 2015
+	 */
+    public static String formatDate(String dateString){
+        String formattedDate = "";
+        String format = "dd"+" "+"MMM"+" "+"yyyy";
+        Date date = new Date(Long.parseLong(dateString));
+        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
+        formattedDate = sdf.format(date);
+        return formattedDate;
     }
 }

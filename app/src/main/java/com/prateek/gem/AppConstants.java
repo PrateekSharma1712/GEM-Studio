@@ -71,6 +71,7 @@ public class AppConstants {
 		public static final int GET_SPECIFIC_MEMBER = 28;
 		public static final int GET_GROUP = 29;
 		public static final int LOGIN = 30;
+        public static final int DELETE_ITEM_BY_ID = 31;
 	}
 	
 	public class ConfirmConstants{
@@ -79,6 +80,9 @@ public class AppConstants {
 		public static final int MEMBER_DELETE = 2;
 		public static final int EXPENSE_DELETE = 3;
 		public static final int ITEM_DELETE = 4;
+        public static final int ITEM_ADD = 5;
+        public static final int CONFIRM_SELECTED_ITEMS_LIST = 6;
+        public static final int IMAGE_CAPTURE = 7;
 	}
 	
 	

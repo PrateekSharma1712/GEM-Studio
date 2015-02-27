@@ -297,4 +297,6 @@ public class DB extends SQLiteOpenHelper{
     }
 
     protected static String[] memberFields = new String[]{TMembers.MEMBER_ID, TMembers.MEMBER_ID_SERVER,TMembers.GCM_REG_NO,TMembers.GROUP_ID_FK, TMembers.NAME, TMembers.PHONE_NUMBER};
+
+    protected static String[] itemFields = new String[]{TItems.CATEGORY, TItems.GROUP_FK, TItems.ITEM_ID, TItems.ITEM_ID_SERVER, TItems.ITEM_NAME};
 }

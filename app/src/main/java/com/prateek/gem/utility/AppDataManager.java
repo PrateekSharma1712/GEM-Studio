@@ -21,6 +21,7 @@ import android.widget.EditText;
 
 import com.prateek.gem.AppConstants;
 import com.prateek.gem.AppSharedPreference;
+import com.prateek.gem.R;
 import com.prateek.gem.model.Group;
 import com.prateek.gem.logger.DebugLogger;
 import com.prateek.gem.model.Users;
@@ -222,5 +223,33 @@ public class AppDataManager {
         user.setUserName(AppSharedPreference.getPreferenceString(AppConstants.ADMIN_NAME));
         user.setPhoneNumber(AppSharedPreference.getPreferenceString(AppConstants.ADMIN_PHONE));
         user.setPassword(AppSharedPreference.getPreferenceString(AppConstants.ADMIN_PASSWORD));
+    }
+
+    public static int getThemePrimaryColor() {
+        return appContext.getResources().getColor(R.color.theme_default_primary);
+    }
+
+    public static int getThemePrimaryDarkColor() {
+        return appContext.getResources().getColor(R.color.theme_default_primary_dark);
+    }
+
+    public static int getThemePrimaryLightColor() {
+        return appContext.getResources().getColor(R.color.theme_default_primary_light);
+    }
+
+    public static int getThemePrimaryTextColor() {
+        return appContext.getResources().getColor(R.color.theme_default_text_primary);
+    }
+
+    public static int getThemeSecondaryTextColor() {
+        return appContext.getResources().getColor(R.color.theme_default_text_secondary);
+    }
+
+    public static int getThemeBackground() {
+        return appContext.getResources().getColor(R.color.theme_background);
+    }
+
+    public static int getThemeButtonMaterialLight() {
+        return appContext.getResources().getColor(R.color.button_material_light);
     }
 }
