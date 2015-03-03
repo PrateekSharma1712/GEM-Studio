@@ -68,7 +68,7 @@ public class SelectingItemsActivity extends MainActivity implements RecyclerView
     private List<Integer> itemIdsSelected;
     String itemNamesString = "";
     private boolean isActionButtonHidden = false;
-
+    private String alreadySelectedItems = null;
 
     @Override
     protected int getLayoutResource() {
@@ -78,6 +78,11 @@ public class SelectingItemsActivity extends MainActivity implements RecyclerView
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        if(intent != null) {
+            alreadySelectedItems = intent.getStringExtra(AppConstants.SELECTED_ITEMS);
+        }
 
         vAddItemButton = (AddFloatingActionButton) findViewById(R.id.vAddItemsButton);
         vAddItemButton.setOnClickListener(this);
@@ -111,6 +116,10 @@ public class SelectingItemsActivity extends MainActivity implements RecyclerView
         mCategoriesAdapter.toggleSelection(selectedCategoryIndex);
         loadItems(mCategoriesAdapter.getSelectedCategory());
 
+        if(!alreadySelectedItems.isEmpty()) {
+            runActionMode();
+        }
+
         vItemsList.setOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
@@ -129,6 +138,8 @@ public class SelectingItemsActivity extends MainActivity implements RecyclerView
                 }
             }
         });
+
+
     }
 
     @Override
@@ -295,13 +306,12 @@ public class SelectingItemsActivity extends MainActivity implements RecyclerView
         DebugLogger.message("category"+category);
         ArrayList<Items> items = DBImpl.getItems(AppDataManager.getCurrentGroup().getGroupIdServer(), category);
         if(items.size() > 0) {
-            if(mItemsAdapter != null) {
-                mItemsAdapter.setDataset(items);
-            } else {
+            if(mItemsAdapter == null) {
                 mItemsAdapter = new ItemsAdapter(this);
                 vItemsList.setAdapter(mItemsAdapter);
-                mItemsAdapter.setDataset(items);
+                mItemsAdapter.setSelectedPositions(alreadySelectedItems);
             }
+            mItemsAdapter.setDataset(items);
             vItemsList.setVisibility(View.VISIBLE);
             vEmptyView.setVisibility(View.GONE);
         } else {
@@ -368,6 +378,19 @@ public class SelectingItemsActivity extends MainActivity implements RecyclerView
                     break;
             }
         }
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(mItemsAdapter.getSelectedCount() <= 0) {
+            Utils.showToast(this, "You have cleared selection");
+            Intent intent = new Intent();
+            intent.putExtra("items", "");
+            setResult(Activity.RESULT_OK,intent);
+            finish();
+        } else {
+            DebugLogger.message("selected"+mItemsAdapter.getSelectedCount());
+        }
     }
 }

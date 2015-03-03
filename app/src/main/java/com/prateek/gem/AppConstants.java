@@ -161,6 +161,8 @@ public class AppConstants {
 
     public static final String ALTER_MEMBER_TABLE1 = "alter_table_member_1";
 
+    public static final String SELECTED_ITEMS = "selecteditems";
+
 }
 
 

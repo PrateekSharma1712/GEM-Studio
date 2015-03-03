@@ -13,6 +13,7 @@ import com.prateek.gem.BaseActivity;
 import com.prateek.gem.R;
 import com.prateek.gem.logger.DebugLogger;
 import com.prateek.gem.model.Items;
+import com.prateek.gem.persistence.DBImpl;
 import com.prateek.gem.utility.AppDataManager;
 
 import java.util.ArrayList;
@@ -103,6 +104,20 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
     public void resetSelectedPositions() {
         selectedPositions.clear();
         DebugLogger.message("selectedPositions"+selectedPositions);
+    }
+
+    public void setSelectedPositions(String selectedItemsString) {
+        DebugLogger.message("selectedItemsString.isEmpty()||"+selectedItemsString.isEmpty());
+        if(!selectedItemsString.isEmpty()) {
+            String[] items = selectedItemsString.split(", ");
+            for (int i = 0; i < items.length; i++) {
+                DebugLogger.message("items.." + items[i]);
+                int itemIdServer = DBImpl.getItemId(items[i], AppDataManager.getCurrentGroup().getGroupIdServer());
+                if(itemIdServer != 0) {
+                    selectedPositions.put(itemIdServer, true);
+                }
+            }
+        }
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{

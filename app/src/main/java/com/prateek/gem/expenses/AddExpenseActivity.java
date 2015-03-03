@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.prateek.gem.AppConstants;
 import com.prateek.gem.MainActivity;
 import com.prateek.gem.R;
 import com.prateek.gem.items.SelectingItemsActivity;
@@ -67,6 +68,7 @@ public class AddExpenseActivity extends MainActivity implements View.OnClickList
 
     private void openSelectItemsScreen() {
         Intent selectItemsIntent = new Intent(this, SelectingItemsActivity.class);
+        selectItemsIntent.putExtra(AppConstants.SELECTED_ITEMS, vExpenseItem.getText().toString());
         startActivityForResult(selectItemsIntent, 123);
     }
 

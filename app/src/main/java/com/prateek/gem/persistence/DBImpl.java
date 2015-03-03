@@ -173,6 +173,20 @@ public class DBImpl extends DB {
         return member;
     }
 
+    public static int getItemId(String itemName, int groupId) {
+        Cursor cursor = getDatabase().query(TItems.TITEMS, itemFields, TItems.GROUP_FK + " = " + groupId + " AND " + TItems.ITEM_NAME + " = '" + itemName + "'", null, null, null, TItems.ITEM_NAME);
+        Items item= new Items();
+        if(cursor.moveToFirst()) {
+            do {
+                item = fillInItem(cursor);
+            } while(cursor.moveToNext());
+        }
+        if(item != null)
+            return item.getIdServer();
+
+        return 0;
+    }
+
     public static ArrayList<Items> getItems(String groupId) {
         Cursor cursor = getDatabase().query(TItems.TITEMS, itemFields, TItems.GROUP_FK + " = " + groupId, null, null, null, TItems.ITEM_NAME);
         return resolveCursorForItems(cursor);
